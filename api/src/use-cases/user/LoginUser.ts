@@ -6,6 +6,3 @@ export class LoginUser {
         return !!user;
     }
 }
-
-///commenteddddd
-//suhail    COMENTS
