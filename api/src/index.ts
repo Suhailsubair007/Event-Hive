@@ -7,7 +7,6 @@ dotenv.config();
 
 const app = express();
 
-// Connect to MongoDB
 connectDB();
 
 const PORT = process.env.PORT || 3000;
@@ -20,7 +19,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Ensure `router` is properly imported
 app.use("/api/users", router);
 
 app.listen(PORT, () => {

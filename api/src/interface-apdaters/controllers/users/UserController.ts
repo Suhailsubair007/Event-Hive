@@ -8,6 +8,8 @@ export class UserController {
   async register(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
+      console.log("=====================reached=====================")
+      console.log(email, password)
       const user = await this.createUser.execute(email, password);
       res.status(201).json({
         sucess: true,
