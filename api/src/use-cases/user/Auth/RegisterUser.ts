@@ -1,6 +1,7 @@
 import {UserModal} from '../../../entities/models/User'
 import {securePassword} from '../../../shared/utils/passwordHashUtil'
 import {RegisterUserDTO} from '../../../shared/dto/UserDto'
+import {CustomError}from '../../../shared/utils/CustomError'
 
 export class RegisterUser {
     async execute(userData: RegisterUserDTO): Promise<{ email: string; name: string; phone: string }> {
@@ -9,7 +10,7 @@ export class RegisterUser {
 
       const existingUser = await UserModal.findOne({ email });
       if (existingUser) {
-        throw new Error("User already exists");
+        throw new CustomError("User already exists" , 400);
       }
 
       const hashedPassword = await securePassword(password);
