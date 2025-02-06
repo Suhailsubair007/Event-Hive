@@ -1,17 +1,5 @@
-import mongoose, { Document, Schema } from "mongoose";
-
-export interface Iuser extends Document {
-  name: string;
-  email: string;
-  password: string;
-  gender?: string;
-  phone?: string; 
-  profilePic?: string;
-  role?: [string];
-  isActive?: boolean;
-  isPremiumUser?: boolean;
-  timestamp?: Date;
-}
+import mongoose, { Schema } from "mongoose";
+import { Iuser } from "../../entities/modelInterface/User";
 
 const UserSchema = new Schema<Iuser>({
   name: { type: String, required: true },
@@ -19,8 +7,7 @@ const UserSchema = new Schema<Iuser>({
   password: { type: String, required: true },
   phone: { type: String },
   profilePic: { type: String },
-  role: { type: [String], enum: ["admin", "user"], default: ["user"] },
-  gender: { type: String },
+  role: { type: String, enum: ["admin", "user"], default: "user" },
   isActive: { type: Boolean, default: true },
   isPremiumUser: { type: Boolean, default: false },
   timestamp: { type: Date, default: Date.now },
