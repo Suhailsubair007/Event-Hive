@@ -1,49 +1,26 @@
+// src/interface-adapters/controllers/UserController.ts
 import { Request, Response } from "express";
-import { CreateUser } from "../../../use-cases/user/CreateUser";
-import { LoginUser } from "../../../use-cases/user/LoginUser";
+import { RegisterUser } from "../../../use-cases/user/Auth/RegisterUser";
+import { Iuser } from "../../../entities/models/User";
+import {RegisterUserDTO} from "../../../shared/dto/UserDto"
+
 
 export class UserController {
-  constructor(private createUser: CreateUser, private loginUser: LoginUser) {}
+  constructor(private registerUser: RegisterUser) {}
 
   async register(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password } = req.body;
-      console.log("=====================reached=====================")
-      console.log(email, password)
-      const user = await this.createUser.execute(email, password);
-      res.status(201).json({
-        sucess: true,
-        message: "User created successfully",
-        data: user,
-      });
-    } catch (error) {
-      res.status(500).json({
-        sucess: false,
-        message: "Internal server error",
-      });
-    }
-  }
+      const { name, email, phone, password } = req.body;
+      const userData: RegisterUserDTO = { name, email, phone, password};
 
-  async login(req: Request, res: Response): Promise<void> {
-    try {
-      const { email, password } = req.body;
-      const isAuth = await this.loginUser.execute(email, password);
-      if (isAuth) {
-        res.status(200).json({
-          sucess: true,
-          message: "User logged in successfully",
-        });
+      const user = await this.registerUser.execute(userData);
+      res.status(201).json({ message: "User registered successfully", user });
+    } catch (error: any) {
+      if (error.message === "User already exists") {
+        res.status(400).json({ message: error.message });
       } else {
-        res.status(401).json({
-          sucess: false,
-          message: "Invalid credentials",
-        });
+        res.status(500).json({ message: "Server error", error: error.message });
       }
-    } catch (error) {
-      res.status(500).json({
-        sucess: false,
-        message: "Internal server error",
-      });
     }
   }
 }

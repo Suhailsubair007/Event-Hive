@@ -1,15 +1,12 @@
-import express from 'express';
-import {UserController} from '../controllers/users/UserController'
-import {CreateUser} from '../../use-cases/user/CreateUser'
-import {LoginUser} from '../../use-cases/user/LoginUser'
+// src/interface-adapters/routes/userRoutes.ts
+import express from "express";
+import { UserController } from "../../interface-apdaters/controllers/users/UserController";
+import { RegisterUser } from "../../use-cases/user/Auth/RegisterUser";
 
 const router = express.Router();
-const createUser = new CreateUser();
-const loginUser = new LoginUser();
-const userController = new UserController(createUser, loginUser);
+const registerUser = new RegisterUser();
+const userController = new UserController(registerUser);
 
-router.post('/register', userController.register);
-router.post('/login', userController.login);
-
+router.post("/register", (req, res) => userController.register(req, res));
 
 export default router;
