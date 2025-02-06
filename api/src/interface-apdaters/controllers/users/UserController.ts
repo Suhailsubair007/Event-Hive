@@ -6,7 +6,7 @@ export class UserController {
   constructor(private registerUser: RegisterUser) {}
 
   async register(req: Request, res: Response): Promise<void> {
-    try {
+    try { 
       const { name, email, phone, password } = req.body;
       const userData: RegisterUserDTO = { name, email, phone, password };
 
