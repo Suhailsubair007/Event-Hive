@@ -1,6 +1,6 @@
-import { IUserRepository } from "../../../entities/repositoryInterface/Interface.userRepository";
-import { Iuser } from "../../../entities/modelInterface/User";
-import {UserModal  } from "../../../frameworks/databaseModels/UserModel";
+import { IUserRepository } from "../../../../entities/repositoryInterface/Interface.userRepository";
+import { Iuser } from "../../../../entities/modelInterface/User";
+import {UserModal  } from "../../../../frameworks/databaseModels/UserModel";
 
 export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<Iuser | null> {

@@ -1,10 +1,10 @@
 import express from "express";
-import { UserController } from "../../interface-apdaters/controllers/users/UserController";
+import { UserController } from "../../interface-apdaters/controllers/users/AuthController/UserController";
 import { RegisterUser } from "../../use-cases/user/Auth/RegisterUser";
-import { UserRepository } from "../../interface-apdaters/repositories/Auth/UserRegister.repository";
-import { OTPRepository } from "../../interface-apdaters/repositories/Auth/otp.repository";
+import { UserRepository } from "../../interface-apdaters/repositories/User/Auth/UserRegister.repository";
+import { OTPRepository } from "../../interface-apdaters/repositories/User/Auth/otp.repository";
 import { SendOTP } from "../../use-cases/user/Auth/sendOtp";
-import { OTPController } from "../../interface-apdaters/controllers/users/otp.controller";
+import { OTPController } from "../../interface-apdaters/controllers/users/AuthController/otp.controller";
 
 const router = express.Router();
 

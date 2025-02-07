@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { SendOTP } from "../../../use-cases/user/Auth/sendOtp";
+import { SendOTP } from "../../../../use-cases/user/Auth/sendOtp";
 
 
 export class OTPController {

@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 app.use(express.json());
-app.use("/api/users", userRoutes);
+app.use("/api/auth", userRoutes);
 app.use(errorHandler); // Global error handler
 
 app.listen(PORT, () => {

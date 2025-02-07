@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { RegisterUser } from "../../../use-cases/user/Auth/RegisterUser";
-import { RegisterUserDTO } from "../../../shared/dto/UserDto";
+import { RegisterUser } from "../../../../use-cases/user/Auth/RegisterUser";
+import { RegisterUserDTO } from "../../../../shared/dto/UserDto";
 
 export class UserController {
   constructor(private registerUser: RegisterUser) {}
@@ -13,7 +13,7 @@ export class UserController {
       const user = await this.registerUser.execute(userData);
       res.status(201).json({ message: "User registered successfully", user });
     } catch (error: any) {
-      res.status(error.statusCode || 500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
     }
   }
   
