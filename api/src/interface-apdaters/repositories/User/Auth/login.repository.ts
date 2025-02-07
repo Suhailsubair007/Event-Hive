@@ -3,7 +3,7 @@ import { IUserRepository } from "../../../../entities/repositoryInterface/interf
 import { Iuser } from "../../../../entities/modelInterface/User";
 import { UserModal } from "../../../../frameworks/databaseModels/UserModel";
 
-export class UserRepository implements IUserRepository {
+export class LoginRepository implements IUserRepository {
   async findByEmail(email: string): Promise<Iuser | null> {
     return UserModal.findOne({ email });
   }
