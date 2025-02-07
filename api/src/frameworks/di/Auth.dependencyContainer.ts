@@ -8,6 +8,9 @@ import { OTPController } from "../../interface-apdaters/controllers/users/AuthCo
 import { LoginController } from "../../interface-apdaters/controllers/users/AuthController/login.controller";
 import { LoginUser } from "../../use-cases/user/Auth/loginUser";
 import { LoginRepository } from "../../interface-apdaters/repositories/User/Auth/login.repository";
+import { VerifyOtp } from "../../use-cases/user/Auth/verifyOtp";
+import { VerifyOtpController } from "../../interface-apdaters/controllers/users/AuthController/verifyOtp.controller";
+import { OTPrepository } from "../../interface-apdaters/repositories/User/Auth/verifyOtp.repository";
 
 // Instantiate repositories
 const userRepository = new UserRepository();
@@ -26,4 +29,9 @@ const loginRepository = new LoginRepository();
 const loginUser = new LoginUser(loginRepository);
 const loginController = new LoginController(loginUser);
 
-export { userController, otpController, loginController };
+// Instantiate verify otp repository
+const verifyOtpRepository = new OTPrepository();
+const verifyOtp = new VerifyOtp(verifyOtpRepository);
+const verifyOtpController = new VerifyOtpController(verifyOtp);
+
+export { userController, otpController, loginController, verifyOtpController };
