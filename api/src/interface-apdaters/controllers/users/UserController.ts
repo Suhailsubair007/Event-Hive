@@ -16,4 +16,5 @@ export class UserController {
       res.status(error.statusCode || 500).json({ message: error.message });
     }
   }
+  
 }
