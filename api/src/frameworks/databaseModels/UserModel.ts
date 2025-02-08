@@ -10,7 +10,10 @@ const UserSchema = new Schema<Iuser>({
   role: { type: String, enum: ["admin", "user"], default: "user" },
   isActive: { type: Boolean, default: true },
   isPremiumUser: { type: Boolean, default: false },
+  location: { type: String },
+  preferences: { type: [String] }, // Array of strings
   timestamp: { type: Date, default: Date.now },
+
 });
 
 export const UserModal = mongoose.model<Iuser>("User", UserSchema);

@@ -11,10 +11,3 @@ router.post("/verify_otp", (req, res) => verifyOtpController.verifyOTP(req, res)
 export default router;
 
 
-
-// {
-//     "email": "suhailsubair0406@gmail.com",
-//     "password": "112233",
-//     "phone":"8899776655",
-//     "name":"Suhail Subair"
-// }

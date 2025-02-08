@@ -9,5 +9,7 @@ export interface Iuser {
   role?: string;
   isActive?: boolean;
   isPremiumUser?: boolean;
+  location?: string;
+  preferences?: string[];
   timestamp?: Date;
 }
