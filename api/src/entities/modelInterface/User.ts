@@ -1,8 +1,8 @@
 export interface Iuser {
   _id?: string;
-  name?: string;
-  email?: string;
-  password?: string;
+  name: string;
+  email: string;
+  password: string;
   gender?: string;
   phone?: string;
   profilePic?: string;
