@@ -10,8 +10,11 @@ const UserSchema = new Schema<Iuser>({
   role: { type: String, enum: ["admin", "user"], default: "user" },
   isActive: { type: Boolean, default: true },
   isPremiumUser: { type: Boolean, default: false },
-  location: { type: String },
-  preferences: { type: [String] }, // Array of strings
+  location: { 
+    latitude: { type: Number },
+    longitude: { type: Number },
+   },
+  preferences: { type: [String] }, 
   timestamp: { type: Date, default: Date.now },
 
 });
