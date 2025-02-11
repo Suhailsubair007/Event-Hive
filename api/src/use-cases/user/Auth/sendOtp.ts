@@ -6,6 +6,7 @@ export class SendOTP {
 
   async execute(email: string): Promise<{ success: boolean; message: string; otp?: string }> {
     const existingOTP = await this.otpRepository.findByEmail(email);
+    
     if (existingOTP) {
       return { success: false, message: "OTP already sent. Please wait." };
     }
