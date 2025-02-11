@@ -1,11 +1,12 @@
 import { useState, ChangeEvent } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Mail, Phone, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal"; // Import OTP modal
-import axiosInstance from "@/config/axiosInstence";
+import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal";
+import { sendOtp } from "../../../services/Auth/authService";
 
 interface FormState {
   fullName: string;
@@ -34,11 +35,15 @@ export default function Signup() {
 
   const [errors, setErrors] = useState<ErrorsState>({});
   const [otpModal, setOtpModal] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const { mutate: sendOtpMutation, isPending } = useMutation({
+    mutationFn: sendOtp,
+  });
+  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
-    setErrors({ ...errors, [e.target.id]: "" }); // Clear error on change
+    setErrors({ ...errors, [e.target.id]: "" }); 
   };
 
   const validateForm = (): boolean => {
@@ -56,28 +61,21 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignup = async () => {
+  const handleSignup = () => {
     if (!validateForm()) return;
-
-    setLoading(true);
-    try {
-      const response = await axiosInstance.post("/auth/send-otp", {
-        email: form.email,
-      });
-
-      console.log("Respose data====>",response.data);
-
-      if (response.data.success) {
+  
+    sendOtpMutation({ email: form.email }, {
+      onSuccess: (data) => {
+        console.log("OTP Sent:", data);
         setOtpModal(true);
-      } else {
-        console.log("Failed to send OTP, try again.");
-      }
-    } catch (error) {
-      console.error("OTP Error:", error);
-      console.log("Error sending OTP.")
-    }
-    setLoading(false);
+      },
+      onError: (error) => {
+        console.error("Signup Error:", error);
+      },
+    });
+    
   };
+  
 
   return (
     <div className="min-h-screen grid md:grid-cols-2">
@@ -131,10 +129,10 @@ export default function Signup() {
 
           <Button
             onClick={handleSignup}
-            disabled={loading}
+            disabled={isPending}
             className="w-full h-12 text-lg bg-[#7848F4] hover:bg-[#7848F4]/90"
           >
-            {loading ? "Sending OTP..." : "Create Account"}
+            {isPending ? "Sending OTP..." : "Create Account"}
           </Button>
         </CardContent>
       </Card>
