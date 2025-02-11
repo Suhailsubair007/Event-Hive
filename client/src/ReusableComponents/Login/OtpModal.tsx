@@ -18,7 +18,7 @@ type OTPVerificationProps = {
 
 export function OTPVerification({ isOpen, onClose, onVerify, email, resendOtp }: OTPVerificationProps) {
   const [otp, setOtp] = useState<string[]>(['', '', '', '', '']);
-  const [timer, setTimer] = useState<number>(120); // 2 minutes
+  const [timer, setTimer] = useState<number>(60); 
 
   useEffect(() => {
     let interval: NodeJS.Timeout | undefined;
@@ -71,7 +71,7 @@ export function OTPVerification({ isOpen, onClose, onVerify, email, resendOtp }:
           <DialogTitle className="text-center">Verify OTP</DialogTitle>
         </DialogHeader>
         <div className="text-center mb-4">
-          We've sent an email with an activation code to your email {email}
+          We've sent an email with an activation code to your email : {email}
         </div>
         <div className="flex justify-center space-x-2 mb-4">
           {otp.map((digit, index) => (

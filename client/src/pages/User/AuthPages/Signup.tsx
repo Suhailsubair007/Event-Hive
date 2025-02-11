@@ -1,11 +1,11 @@
 import { useState, ChangeEvent } from "react";
-import axios from "axios";
 import { Mail, Phone, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal"; // Import OTP modal
+import axiosInstance from "@/config/axiosInstence";
 
 interface FormState {
   fullName: string;
@@ -61,19 +61,20 @@ export default function Signup() {
 
     setLoading(true);
     try {
-      const response = await axios.post("/api/send-otp", {
+      const response = await axiosInstance.post("/auth/send-otp", {
         email: form.email,
-        phone: form.phone,
       });
+
+      console.log("Respose data====>",response.data);
 
       if (response.data.success) {
         setOtpModal(true);
       } else {
-        alert("Failed to send OTP, try again.");
+        console.log("Failed to send OTP, try again.");
       }
     } catch (error) {
       console.error("OTP Error:", error);
-      alert("Error sending OTP.");
+      console.log("Error sending OTP.")
     }
     setLoading(false);
   };
@@ -102,7 +103,7 @@ export default function Signup() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[
               { id: "fullName", label: "Full Name", icon: User, type: "text" },
               { id: "email", label: "Email", icon: Mail, type: "email" },
