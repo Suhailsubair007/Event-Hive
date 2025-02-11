@@ -7,14 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal";
 import { sendOtp } from "../../../services/Auth/authService";
-
-interface FormState {
-  fullName: string;
-  email: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-}
+import { validateSignupForm, FormState } from "../../../utils/validations/SignupValidation";
 
 interface ErrorsState {
   fullName?: string;
@@ -39,43 +32,33 @@ export default function Signup() {
   const { mutate: sendOtpMutation, isPending } = useMutation({
     mutationFn: sendOtp,
   });
-  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value });
-    setErrors({ ...errors, [e.target.id]: "" }); 
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: ErrorsState = {};
-    if (!form.fullName.trim()) newErrors.fullName = "Full Name is required";
-    if (!form.email.match(/^\S+@\S+\.\S+$/)) newErrors.email = "Invalid Email";
-    if (!form.phone.match(/^\+?\d{10,15}$/))
-      newErrors.phone = "Invalid Phone Number";
-    if (form.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-    if (form.password !== form.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors({ ...errors, [e.target.id]: "" });
   };
 
   const handleSignup = () => {
-    if (!validateForm()) return;
-  
-    sendOtpMutation({ email: form.email }, {
-      onSuccess: (data) => {
-        console.log("OTP Sent:", data);
-        setOtpModal(true);
-      },
-      onError: (error) => {
-        console.error("Signup Error:", error);
-      },
-    });
-    
+    const { isValid, errors: validationErrors } = validateSignupForm(form);
+
+    if (!isValid) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    sendOtpMutation(
+      { email: form.email },
+      {
+        onSuccess: (data) => {
+          console.log("OTP Sent:", data);
+          setOtpModal(true);
+        },
+        onError: (error) => {
+          console.error("Signup Error:", error);
+        },
+      }
+    );
   };
-  
 
   return (
     <div className="min-h-screen grid md:grid-cols-2">
