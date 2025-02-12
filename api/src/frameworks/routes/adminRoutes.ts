@@ -1,6 +1,6 @@
 import express from "express";
 import { categoryController } from "../di/Admin/Cathegory.dependencyContainer";
-import {userController} from '../di/Admin/User.dependencyContainer'
+import { userController } from "../di/Admin/User.dependencyContainer";
 
 const adminRoutes = express.Router();
 
