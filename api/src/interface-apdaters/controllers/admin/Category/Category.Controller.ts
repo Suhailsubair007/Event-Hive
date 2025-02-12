@@ -3,12 +3,14 @@ import { AddCategory } from "../../../../use-cases/admin/category/AddCategory";
 import { ICategory } from "../../../../entities/modelInterface/Category";
 import { EditCategory } from "../../../../use-cases/admin/category/EditCtegory";
 import { ListCategory } from "../../../../use-cases/admin/category/ListCategory";
+import { GetAllCategories } from "../../../../use-cases/admin/category/GetAllCategories";
 
 export class CategoryContoller {
   constructor(
     private addCategory: AddCategory,
     private editCategory: EditCategory,
-    private listCategory: ListCategory
+    private listCategory: ListCategory,
+    private getAllCategories: GetAllCategories
   ) {}
 
   async add(req: Request, res: Response): Promise<void> {
@@ -60,6 +62,18 @@ export class CategoryContoller {
 
       const updatedCategory = await this.listCategory.execute(id, isListed);
       res.status(200).json({ success: true, category: updatedCategory });
+    } catch (error: any) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async getAll(req: Request, res: Response): Promise<void> {
+    try {
+      const categories = await this.getAllCategories.execute();
+      res.status(200).json({ success: true, categories });
     } catch (error: any) {
       res.status(error.statusCode || 500).json({
         success: false,

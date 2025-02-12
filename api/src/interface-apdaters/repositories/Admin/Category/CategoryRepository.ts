@@ -39,4 +39,7 @@ export class categoryRepository implements ICategoryRepository {
     return CategoryModel.findByIdAndUpdate(id, { isListed }, { new: true });
   }
 
+  async findAllCategories(): Promise<ICategory[]> {
+    return CategoryModel.find();
+  }
 }
