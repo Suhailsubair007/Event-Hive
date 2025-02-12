@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import connectDB from "./shared/config/db";
 import cors from "cors";
 import userRoutes from "./frameworks/routes/userRoutes";
+import adminRoutes from "./frameworks/routes/adminRoutes";
+
 import { errorHandler } from "./interface-apdaters/middleware/errorHandler";
 
 dotenv.config();
@@ -21,6 +23,7 @@ app.use(
 
 app.use(express.json());
 app.use("/api/auth", userRoutes);
+app.use("/api/admin", adminRoutes);
 app.use(errorHandler); // Global error handler
 
 app.listen(PORT, () => {

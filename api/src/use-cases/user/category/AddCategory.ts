@@ -11,4 +11,5 @@ export class AddCategory {
     }
     return await this.categoryRepository.createCategory(category);
   }
+  
 }
