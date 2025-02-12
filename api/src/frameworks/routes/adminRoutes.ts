@@ -1,5 +1,6 @@
 import express from "express";
-import { categoryController } from "../../frameworks/di/Cathegory.dependencyContainer";
+import { categoryController } from "../di/Admin/Cathegory.dependencyContainer";
+import {userController} from '../di/Admin/User.dependencyContainer'
 
 const adminRoutes = express.Router();
 
@@ -14,4 +15,5 @@ adminRoutes.get("/categories", (req, res) =>
   categoryController.getAll(req, res)
 );
 
+adminRoutes.get("/users", (req, res) => userController.getUsers(req, res));
 export default adminRoutes;

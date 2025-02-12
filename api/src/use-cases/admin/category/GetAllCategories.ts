@@ -1,5 +1,5 @@
 // src/application/use-cases/GetAllCategories.ts
-import { ICategoryRepository } from "../../../entities/repositoryInterface/interface.categoryRepository";
+import { ICategoryRepository } from "../../../entities/repositoryInterface/Admin/interface.categoryRepository";
 import { ICategory } from "../../../entities/modelInterface/Category";
 
 export class GetAllCategories {

@@ -1,6 +1,7 @@
-import { Iuser } from "../../entities/modelInterface/User";
+import { Iuser } from "../../modelInterface/User";
 
 export interface IUserRepository {
   findByEmail(email: string): Promise<Iuser | null>;
   createUser(user: Iuser): Promise<Iuser>;
+ 
 }

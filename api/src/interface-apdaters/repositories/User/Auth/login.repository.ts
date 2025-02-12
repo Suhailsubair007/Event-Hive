@@ -1,5 +1,5 @@
 // src/infrastructure/repositories/UserRepository.ts
-import { IUserRepository } from "../../../../entities/repositoryInterface/interface.loginRepository";
+import { IUserRepository } from "../../../../entities/repositoryInterface/User/interface.loginRepository";
 import { Iuser } from "../../../../entities/modelInterface/User";
 import { UserModal } from "../../../../frameworks/databaseModels/UserModel";
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { otpController, userController,loginController,verifyOtpController,userPreferenceController } from "../di/Auth.dependencyContainer";
+import { otpController, userController,loginController,verifyOtpController,userPreferenceController } from "../di/User/Auth.dependencyContainer";
 
 
 const userRoutes = express.Router();

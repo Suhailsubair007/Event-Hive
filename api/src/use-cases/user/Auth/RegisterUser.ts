@@ -2,7 +2,7 @@ import { securePassword } from "../../../shared/utils/passwordHashUtil";
 import { RegisterUserDTO } from "../../../shared/dto/UserDto";
 import { CustomError } from "../../../shared/utils/CustomError";
 import { Iuser } from "../../../entities/modelInterface/User";
-import { IUserRepository } from "../../../entities/repositoryInterface/Interface.userRepository";
+import { IUserRepository } from "../../../entities/repositoryInterface/User/Interface.userRepository";
 
 export class RegisterUser {
   constructor(private userRepository: IUserRepository) {}

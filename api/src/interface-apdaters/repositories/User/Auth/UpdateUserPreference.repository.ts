@@ -1,4 +1,4 @@
-import { IUserPreferenceRepository } from "../../../../entities/repositoryInterface/interface.Userpreference";
+import { IUserPreferenceRepository } from "../../../../entities/repositoryInterface/User/interface.Userpreference";
 import { UserModal } from "../../../../frameworks/databaseModels/UserModel";
 
 export class UserPreferenceRepository implements IUserPreferenceRepository {

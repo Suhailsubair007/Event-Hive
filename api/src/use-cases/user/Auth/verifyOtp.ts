@@ -1,4 +1,4 @@
- import {IOTPVerifyRepository} from '../../../entities/repositoryInterface/interface.verifyOtp'
+ import {IOTPVerifyRepository} from '../../../entities/repositoryInterface/User/interface.verifyOtp'
  import {CustomError} from '../../../shared/utils/CustomError'
 
  export class VerifyOtp {

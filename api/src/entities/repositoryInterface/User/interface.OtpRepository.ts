@@ -1,4 +1,4 @@
-import { IOTP } from "../modelInterface/otp.interface";
+import { IOTP } from "../../modelInterface/otp.interface";
 
 export interface IOTPRepository {
   findByEmail(email: string): Promise<IOTP | null>;

@@ -1,4 +1,4 @@
-import { IUserPreferenceRepository } from "../../../entities/repositoryInterface/interface.Userpreference";
+import { IUserPreferenceRepository } from "../../../entities/repositoryInterface/User/interface.Userpreference";
 import { UserPreferencesDTO } from "../../../shared/dto/userPreferenceDTO";
 import { CustomError } from "../../../shared/utils/CustomError";
 

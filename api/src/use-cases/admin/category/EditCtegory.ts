@@ -1,4 +1,4 @@
-import { ICategoryRepository } from "../../../entities/repositoryInterface/interface.categoryRepository";
+import { ICategoryRepository } from "../../../entities/repositoryInterface/Admin/interface.categoryRepository";
 import { CustomError } from "../../../shared/utils/CustomError";
 import { ICategory } from "../../../entities/modelInterface/Category";
 

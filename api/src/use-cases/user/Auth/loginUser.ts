@@ -1,5 +1,5 @@
 // src/application/use-cases/LoginUser.ts
-import { IUserRepository } from "../../../entities/repositoryInterface/interface.loginRepository";
+import { IUserRepository } from "../../../entities/repositoryInterface/User/interface.loginRepository";
 import { CustomError } from "../../../shared/utils/CustomError";
 import bcrypt from "bcrypt";
 

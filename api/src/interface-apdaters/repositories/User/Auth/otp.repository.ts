@@ -1,4 +1,4 @@
-import { IOTPRepository } from "../../../../entities/repositoryInterface/interface.OtpRepository";
+import { IOTPRepository } from "../../../../entities/repositoryInterface/User/interface.OtpRepository";
 import {IOTP } from "../../../../entities/modelInterface/otp.interface";
 import {OTP} from '../../../../frameworks/databaseModels/otpModal'
 
