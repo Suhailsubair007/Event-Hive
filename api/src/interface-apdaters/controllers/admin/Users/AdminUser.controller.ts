@@ -1,10 +1,12 @@
 // src/interface-adapters/controllers/UserController.ts
 import { Request, Response } from "express";
 import { GetUsersByPremiumStatus } from "../../../../use-cases/admin/User/GetUsers";
+import {AdminLogin} from '../../../../use-cases/admin/User/LoginaAdmin'
 
 export class AdminUserController {
   constructor(
-    private getUsersByPremiumStatus: GetUsersByPremiumStatus
+    private getUsersByPremiumStatus: GetUsersByPremiumStatus,
+    private loginAdmin : AdminLogin
   ) {}
 
   async getUsers(req: Request, res: Response): Promise<void> {
@@ -23,4 +25,22 @@ export class AdminUserController {
       });
     }
   }
-}
+
+  async adminLogin(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, password } = req.body;
+      const admin = await this.loginAdmin.execute(email, password);
+
+      res.status(200).json({
+        success: true,
+        message: "Admin logged in successfully",
+        admin,
+      });
+    } catch (error: any) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+} 

@@ -16,4 +16,7 @@ adminRoutes.get("/categories", (req, res) =>
 );
 
 adminRoutes.get("/users", (req, res) => userController.getUsers(req, res));
+
+adminRoutes.post("/login", (req, res) => userController.adminLogin(req, res));
+
 export default adminRoutes;
