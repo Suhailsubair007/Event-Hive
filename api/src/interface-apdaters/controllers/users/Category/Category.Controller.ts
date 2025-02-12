@@ -25,9 +25,9 @@ export class CategoryContoller {
         category: newCategory,
       });
     } catch (error: any) {
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         success: false,
-        messgae: "Internal server error",
+        messgae: error.message,
       });
     }
   }
@@ -44,7 +44,7 @@ export class CategoryContoller {
       });
       res.status(200).json({ success: true, category: updatedCategory });
     } catch (error: any) {
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });

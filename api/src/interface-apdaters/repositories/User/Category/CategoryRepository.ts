@@ -20,11 +20,18 @@ export class categoryRepository implements ICategoryRepository {
     category: Partial<ICategory>
   ): Promise<ICategory | null> {
     if (category.name) {
-      const existingCategory = await CategoryModel.findOne({ name: category.name, _id: { $ne: id } });
+      const existingCategory = await CategoryModel.findOne({
+        name: category.name,
+        _id: { $ne: id },
+      });
       if (existingCategory) {
         throw new CustomError("Category with this name already exists", 400);
       }
     }
     return CategoryModel.findByIdAndUpdate(id, category, { new: true });
+  }
+
+  async findByName(name: string): Promise<ICategory | null> {
+    return CategoryModel.findOne({ name });
   }
 }

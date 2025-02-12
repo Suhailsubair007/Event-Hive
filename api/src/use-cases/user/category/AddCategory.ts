@@ -9,7 +9,13 @@ export class AddCategory {
     if (!category.name || !category.description || !category.imageUrl) {
       throw new CustomError("All fields are required", 400);
     }
+
+
+    const existingCategory = await this.categoryRepository.findByName(category.name);
+    if (existingCategory) {
+      throw new CustomError("Category with this name already exists", 400);
+    }
+
     return await this.categoryRepository.createCategory(category);
   }
-  
 }
