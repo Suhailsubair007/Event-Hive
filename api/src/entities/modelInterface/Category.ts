@@ -3,4 +3,5 @@ export interface ICategory {
     description: string;
     imageUrl: string;
     isListed: boolean;
+    timestamp?: Date;
 }

@@ -34,4 +34,9 @@ export class categoryRepository implements ICategoryRepository {
   async findByName(name: string): Promise<ICategory | null> {
     return CategoryModel.findOne({ name });
   }
+
+  async listCategory(id: string, isListed: boolean): Promise<ICategory | null> {
+    return CategoryModel.findByIdAndUpdate(id, { isListed }, { new: true });
+  }
+
 }

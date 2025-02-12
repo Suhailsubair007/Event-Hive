@@ -5,6 +5,7 @@ const adminRoutes = express.Router();
 
 adminRoutes.post("/categories", (req, res) => categoryController.add(req, res));
 adminRoutes.post("/categories/:id", (req, res) => categoryController.edit(req, res));
+adminRoutes.post("/categories/:id/list", (req, res) => categoryController.listUnlist(req, res));
 
 
 

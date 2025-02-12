@@ -9,6 +9,7 @@ const CategorySchema = new Schema<CategoryDocument>({
   description: { type: String, required: true },
   imageUrl: { type: String, required: true },
   isListed: { type: Boolean, default: true },
+  timestamp: { type: Date, default: Date.now },
 });
 
 export const CategoryModel = model<CategoryDocument>(

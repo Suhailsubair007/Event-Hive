@@ -2,11 +2,13 @@ import { Request, Response } from "express";
 import { AddCategory } from "../../../../use-cases/user/category/AddCategory";
 import { ICategory } from "../../../../entities/modelInterface/Category";
 import { EditCategory } from "../../../../use-cases/user/category/EditCtegory";
+import { ListCategory } from "../../../../use-cases/user/category/ListCategory";
 
 export class CategoryContoller {
   constructor(
     private addCategory: AddCategory,
-    private editCategory : EditCategory
+    private editCategory: EditCategory,
+    private listCategory: ListCategory
   ) {}
 
   async add(req: Request, res: Response): Promise<void> {
@@ -42,6 +44,21 @@ export class CategoryContoller {
         description,
         imageUrl,
       });
+      res.status(200).json({ success: true, category: updatedCategory });
+    } catch (error: any) {
+      res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  async listUnlist(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { isListed } = req.body;
+
+      const updatedCategory = await this.listCategory.execute(id, isListed);
       res.status(200).json({ success: true, category: updatedCategory });
     } catch (error: any) {
       res.status(error.statusCode || 500).json({
