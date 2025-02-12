@@ -1,8 +1,8 @@
-import { AddCategory } from "../../use-cases/user/category/AddCategory";
-import { EditCategory } from "../../use-cases/user/category/EditCtegory";
+import { AddCategory } from "../../use-cases/admin/category/AddCategory";
+import { EditCategory } from "../../use-cases/admin/category/EditCtegory";
 import { CategoryContoller } from "../../interface-apdaters/controllers/admin/Category/Category.Controller";
 import { categoryRepository } from "../../interface-apdaters/repositories/Admin/Category/CategoryRepository";
-import {ListCategory} from '../../use-cases/user/category/ListCategory'
+import {ListCategory} from '../../use-cases/admin/category/ListCategory'
 
 const categoryRepo = new categoryRepository();
 

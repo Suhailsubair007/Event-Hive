@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AddCategory } from "../../../../use-cases/user/category/AddCategory";
+import { AddCategory } from "../../../../use-cases/admin/category/AddCategory";
 import { ICategory } from "../../../../entities/modelInterface/Category";
-import { EditCategory } from "../../../../use-cases/user/category/EditCtegory";
-import { ListCategory } from "../../../../use-cases/user/category/ListCategory";
+import { EditCategory } from "../../../../use-cases/admin/category/EditCtegory";
+import { ListCategory } from "../../../../use-cases/admin/category/ListCategory";
 
 export class CategoryContoller {
   constructor(
