@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal";
-import { sendOtp } from "../../../services/Auth/authService";
+import { sendOtp, verifyOtp, registerUser } from "../../../services/Auth/authService";
 import { validateSignupForm, FormState } from "../../../utils/validations/SignupValidation";
 
 interface ErrorsState {
@@ -28,9 +28,31 @@ export default function Signup() {
 
   const [errors, setErrors] = useState<ErrorsState>({});
   const [otpModal, setOtpModal] = useState<boolean>(false);
+  const [otp, setOtp] = useState<string>("");
 
-  const { mutate: sendOtpMutation, isPending } = useMutation({
+  const { mutate: sendOtpMutation, isPending: sendingOtp } = useMutation({
     mutationFn: sendOtp,
+  });
+
+  const { mutate: verifyOtpMutation, isPending: verifyingOtp } = useMutation({
+    mutationFn: verifyOtp,
+    onSuccess: () => handleRegister(), // If OTP is correct, proceed to registration
+    onError: (error) => {
+      console.error("OTP Verification Error:", error);
+      alert("Invalid OTP. Please try again.");
+    },
+  });
+
+  const { mutate: registerMutation, isPending: registering } = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      alert("Registration successful!");
+      setOtpModal(false);
+    },
+    onError: (error) => {
+      console.error("Signup Error:", error);
+      alert("Signup failed. Please try again.");
+    },
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,10 +76,25 @@ export default function Signup() {
           setOtpModal(true);
         },
         onError: (error) => {
-          console.error("Signup Error:", error);
+          console.error("OTP Sending Error:", error);
         },
       }
     );
+  };
+
+  const handleVerifyOtp = (otp: string) => {
+    setOtp(otp);
+    verifyOtpMutation({ email: form.email, otp });
+  };
+
+  const handleRegister = () => {
+    registerMutation({
+      name: form.fullName,
+      email: form.email,
+      phone: form.phone,
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+    });
   };
 
   return (
@@ -112,10 +149,10 @@ export default function Signup() {
 
           <Button
             onClick={handleSignup}
-            disabled={isPending}
+            disabled={sendingOtp}
             className="w-full h-12 text-lg bg-[#7848F4] hover:bg-[#7848F4]/90"
           >
-            {isPending ? "Sending OTP..." : "Create Account"}
+            {sendingOtp ? "Sending OTP..." : "Create Account"}
           </Button>
         </CardContent>
       </Card>
@@ -124,9 +161,9 @@ export default function Signup() {
       <OTPVerification
         isOpen={otpModal}
         onClose={() => setOtpModal(false)}
-        onVerify={(otp: string) => console.log("Verifying OTP:", otp)}
+        onVerify={handleVerifyOtp}
         email={form.email}
-        resendOtp={() => console.log("Resending OTP")}
+        resendOtp={() => sendOtpMutation({ email: form.email })}
       />
     </div>
   );
