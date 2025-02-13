@@ -39,7 +39,17 @@ const verifyOtpController = new VerifyOtpController(verifyOtp);
 
 // Instantiate user preference repository
 const userPreferenceRepository = new UserPreferenceRepository();
-const updateUserPreferenceUseCase = new updateUserPreference(userPreferenceRepository);
-const userPreferenceController = new UserPreferenceController(updateUserPreferenceUseCase);
+const updateUserPreferenceUseCase = new updateUserPreference(
+  userPreferenceRepository
+);
+const userPreferenceController = new UserPreferenceController(
+  updateUserPreferenceUseCase
+);
 
-export { userController, otpController, loginController, verifyOtpController , userPreferenceController};
+export {
+  userController,
+  otpController,
+  loginController,
+  verifyOtpController,
+  userPreferenceController,
+};

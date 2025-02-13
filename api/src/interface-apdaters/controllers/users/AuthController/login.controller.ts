@@ -7,6 +7,7 @@ export class LoginController {
   async login(req: Request, res: Response) {
     try {
       const { email, password } = req.body;
+      console.log(email , password , "=======================================")
       const result = await this.loginUser.execute(email, password);
       res.status(200).json({
         success: true,
