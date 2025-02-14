@@ -5,6 +5,7 @@ import {
   loginController,
   verifyOtpController,
   userPreferenceController,
+  googleController 
 } from "../di/User/Auth.dependencyContainer";
 
 const userRoutes = express.Router();
@@ -18,5 +19,8 @@ userRoutes.post("/verify_otp", (req, res) =>
 userRoutes.post("/prefrence", (req, res) =>
   userPreferenceController.updatePreference(req, res)
 );
+
+userRoutes.post('/google-login',(req,res)=> googleController.login(req,res));
+userRoutes.post('/google-sigup',(req,res)=> googleController.signup(req,res));
 
 export default userRoutes;

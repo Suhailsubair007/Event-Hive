@@ -4,7 +4,7 @@ import { Iuser } from "../../entities/modelInterface/User";
 const UserSchema = new Schema<Iuser>({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  password: { type: String, required: true },
+  password: { type: String },
   phone: { type: String },
   profilePic: { type: String },
   role: { type: String, enum: ["admin", "user"], default: "user" },

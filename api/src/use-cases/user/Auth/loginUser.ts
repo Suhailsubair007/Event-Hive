@@ -6,7 +6,10 @@ import bcrypt from "bcrypt";
 export class LoginUser {
   constructor(private userRepository: IUserRepository) {}
 
-  async execute(email: string, password: string): Promise<{ name: string; email: string; id: string }> {
+  async execute(
+    email: string,
+    password: string
+  ): Promise<{ name: string; email: string; id: string }> {
     if (!email || !password) {
       throw new CustomError("All fields are required", 400);
     }
@@ -20,7 +23,10 @@ export class LoginUser {
       throw new CustomError("User is blocked. Please contact support.", 403);
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = user.password
+      ? await bcrypt.compare(password, user.password)
+      : false;
+
     if (!isPasswordValid) {
       throw new CustomError("Invalid credentials", 401);
     }
