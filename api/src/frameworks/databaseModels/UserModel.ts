@@ -9,6 +9,7 @@ const UserSchema = new Schema<Iuser>({
   profilePic: { type: String },
   role: { type: String, enum: ["admin", "user"], default: "user" },
   isActive: { type: Boolean, default: true },
+  googleId: { type: String },
   isPremiumUser: { type: Boolean, default: false },
   location: {
     latitude: { type: Number },

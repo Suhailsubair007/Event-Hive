@@ -14,6 +14,9 @@ import { OTPrepository } from "../../../interface-apdaters/repositories/User/Aut
 import { updateUserPreference } from "../../../use-cases/user/Auth/userPreference";
 import { UserPreferenceRepository } from "../../../interface-apdaters/repositories/User/Auth/UpdateUserPreference.repository";
 import { UserPreferenceController } from "../../../interface-apdaters/controllers/users/AuthController/userPreference.controller";
+import { GoogleSignUp } from "../../../use-cases/user/Auth/GoogleLogin";
+import { GoogleLogin } from "../../../use-cases/user/Auth/GoogleSignUp";
+import { GoogleController} from '../../../interface-apdaters/controllers/users/AuthController/google.controller'
 
 // Instantiate repositories
 const userRepository = new UserRepository();
@@ -46,10 +49,16 @@ const userPreferenceController = new UserPreferenceController(
   updateUserPreferenceUseCase
 );
 
+const googleSignUpUseCase = new GoogleSignUp(userRepository);
+const googleLoginUseCase = new GoogleLogin(userRepository);
+
+const googleController = new GoogleController(googleLoginUseCase, googleSignUpUseCase);
+
 export {
   userController,
   otpController,
   loginController,
   verifyOtpController,
   userPreferenceController,
+  googleController
 };
