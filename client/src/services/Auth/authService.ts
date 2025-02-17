@@ -1,7 +1,5 @@
 import axiosInstance from "@/config/axiosInstence";
 
-
-
 export interface SignupData {
   name: string;
   email: string;
@@ -19,6 +17,15 @@ export interface GoogleLoginData {
   name: string;
   email: string;
   sub: string;
+}
+
+export interface UpdatePreferencesData {
+  email: string;
+  preferences: string[];
+  location: {
+    latitude: number;
+    longitude: number;
+  };
 }
 
 export const sendOtp = async ({ email }: { email: string }) => {
@@ -41,7 +48,7 @@ export const registerUser = async (data: SignupData) => {
   const response = await axiosInstance.post("/auth/register", data);
   return response.data;
 };
-
+3
 export const LoginUser = async (data: LoginData) => {
   const response = await axiosInstance.post("/auth/login", data);
   return response.data;
@@ -54,5 +61,10 @@ export const googleLogin = async (data: GoogleLoginData) => {
 
 export const googleSignup = async (data: GoogleLoginData) => {
   const response = await axiosInstance.post("/auth/google-sigup", data);
+  return response.data;
+};
+
+export const updateUserPreferences = async (data: UpdatePreferencesData) => {
+  const response = await axiosInstance.post("/auth/prefrence", data);
   return response.data;
 };
