@@ -1,14 +1,21 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { LoginUser } from "../../../services/Auth/authService";
-import { Mail } from "lucide-react";
+import { LoginUser, googleLogin } from "../../../services/Auth/authService";
+import { jwtDecode } from "jwt-decode";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { toast } from "sonner";
+
+interface GoogleLoginData {
+  name: string;
+  email: string;
+  sub: string;
+}
 
 export default function Login() {
   const navigate = useNavigate();
@@ -19,7 +26,7 @@ export default function Login() {
     mutationFn: LoginUser,
     onSuccess: (data) => {
       if (data.success) {
-        toast.success('Login Sucessfull')
+        toast.success("Login Sucessfull");
         navigate("/landing");
       } else {
         alert("Login failed. Please check your credentials.");
@@ -30,8 +37,45 @@ export default function Login() {
     },
   });
 
+  const googleLoginMutation = useMutation({
+    mutationFn: googleLogin,
+    onSuccess: (data) => {
+      console.log("User Data:", data.user);
+      toast.success("Google Login successful!");
+      navigate("/landing");
+    },
+    onError: (error: any) => {
+      if (error.response && error.response.status === 403) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Google login failed. Please try again.");
+      }
+    },
+  });
+
   const handleLogin = () => {
     mutation.mutate({ email, password });
+  };
+
+  const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
+    
+    if (!credentialResponse.credential) {
+      toast.error("Google login failed. No credentials received.");
+      return;
+    }
+
+    const decodedToken: any = jwtDecode(credentialResponse.credential);
+
+
+    const googleLoginData: GoogleLoginData = {
+      name: decodedToken.name,
+      email: decodedToken.email,
+      sub: decodedToken.sub, 
+    };
+
+    console.log("Decoded JWT Data:", googleLoginData);
+
+    googleLoginMutation.mutate(googleLoginData);
   };
 
   return (
@@ -101,11 +145,11 @@ export default function Login() {
               </span>
             </div>
           </div>
-
-          <div className="grid gap-4">
-            <Button variant="outline" className="h-12">
-              <Mail className="mr-2 h-5 w-5" /> Sign in with Google
-            </Button>
+          <div className="flex justify-center items-center">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={() => toast.error("Google login failed")}
+            />
           </div>
 
           <div className="text-center">

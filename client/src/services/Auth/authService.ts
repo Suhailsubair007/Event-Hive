@@ -13,6 +13,12 @@ export interface LoginData {
   password: string;
 }
 
+export interface GoogleLoginData {
+  name: string;
+  email: string;
+  sub: string;
+}
+
 export const sendOtp = async ({ email }: { email: string }) => {
   const response = await axiosInstance.post("/auth/send-otp", { email });
   return response.data;
@@ -36,5 +42,10 @@ export const registerUser = async (data: SignupData) => {
 
 export const LoginUser = async (data: LoginData) => {
   const response = await axiosInstance.post("/auth/login", data);
+  return response.data;
+};
+
+export const googleLogin = async (data: GoogleLoginData) => {
+  const response = await axiosInstance.post("/auth/google-login", data);
   return response.data;
 };
