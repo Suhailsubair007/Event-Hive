@@ -49,3 +49,8 @@ export const googleLogin = async (data: GoogleLoginData) => {
   const response = await axiosInstance.post("/auth/google-login", data);
   return response.data;
 };
+
+export const googleSignup = async (data: GoogleLoginData) => {
+  const response = await axiosInstance.post("/auth/google-sigup", data);
+  return response.data;
+};

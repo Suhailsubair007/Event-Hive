@@ -1,13 +1,24 @@
 import { useState, ChangeEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { Mail, Phone, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { jwtDecode } from "jwt-decode";
+import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal";
-import { sendOtp, verifyOtp, registerUser } from "../../../services/Auth/authService";
+import { sendOtp, verifyOtp, registerUser , googleSignup} from "../../../services/Auth/authService";
 import { validateSignupForm, FormState } from "../../../utils/validations/SignupValidation";
+import { toast } from "sonner";
+
+
+ interface GoogleSignup {
+  name: string;
+  email: string;
+  sub: string;
+}
 
 interface ErrorsState {
   fullName?: string;
@@ -18,6 +29,7 @@ interface ErrorsState {
 }
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<FormState>({
     fullName: "",
     email: "",
@@ -52,6 +64,22 @@ export default function Signup() {
     onError: (error) => {
       console.error("Signup Error:", error);
       alert("Signup failed. Please try again.");
+    },
+  });
+
+  const googleSignupMutate = useMutation({
+    mutationFn: googleSignup,
+    onSuccess: (data: GoogleSignup) => {
+      console.log("User Data:", data);
+      toast.success("Google Signup successful!");
+      navigate("/preference");
+    },
+    onError: (error: any) => {
+      if (error.response?.status === 403) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Google signup failed. Please try again.");
+      }
     },
   });
 
@@ -96,6 +124,24 @@ export default function Signup() {
       confirmPassword: form.confirmPassword,
     });
   };
+
+  const handleGoogleSignup = (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      toast.error("Google signup failed. No credentials received.");
+      return;
+    }
+
+    const decodedToken: any = jwtDecode(credentialResponse.credential);
+    const googleSignupData = {
+      name: decodedToken.name,
+      email: decodedToken.email,
+      sub: decodedToken.sub,
+    };
+
+    console.log("Decoded JWT Data:", googleSignupData);
+    googleSignupMutate.mutate(googleSignupData);
+  };
+
 
   return (
     <div className="min-h-screen grid md:grid-cols-2">
@@ -154,6 +200,7 @@ export default function Signup() {
           >
             {sendingOtp ? "Sending OTP..." : "Create Account"}
           </Button>
+          <GoogleLogin onSuccess={handleGoogleSignup} onError={() => toast.error("Google Signup Failed")} />
         </CardContent>
       </Card>
 
