@@ -1,5 +1,7 @@
 import axiosInstance from "@/config/axiosInstence";
 
+
+
 export interface SignupData {
   name: string;
   email: string;

@@ -9,12 +9,21 @@ import { Label } from "@/components/ui/label";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal";
-import { sendOtp, verifyOtp, registerUser , googleSignup} from "../../../services/Auth/authService";
-import { validateSignupForm, FormState } from "../../../utils/validations/SignupValidation";
+import {
+  sendOtp,
+  verifyOtp,
+  registerUser,
+  googleSignup,
+} from "../../../services/Auth/authService";
+import {
+  validateSignupForm,
+  FormState,
+} from "../../../utils/validations/SignupValidation";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "../../../redux/userSlice";
 import { toast } from "sonner";
 
-
- interface GoogleSignup {
+interface GoogleSignup {
   name: string;
   email: string;
   sub: string;
@@ -30,6 +39,7 @@ interface ErrorsState {
 
 export default function Signup() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form, setForm] = useState<FormState>({
     fullName: "",
     email: "",
@@ -57,9 +67,12 @@ export default function Signup() {
 
   const { mutate: registerMutation, isPending: registering } = useMutation({
     mutationFn: registerUser,
-    onSuccess: () => {
-      alert("Registration successful!");
+    onSuccess: (data) => {
+      dispatch(setUserDetails(data)); 
+      toast.success("Registration successful!");
       setOtpModal(false);
+      navigate("/preference");
+
     },
     onError: (error) => {
       console.error("Signup Error:", error);
@@ -142,7 +155,6 @@ export default function Signup() {
     googleSignupMutate.mutate(googleSignupData);
   };
 
-
   return (
     <div className="min-h-screen grid md:grid-cols-2">
       <div className="hidden md:block relative bg-[url('https://res.cloudinary.com/dupo7yv88/image/upload/v1739121646/yzbv7qtndn1tzxge3a81.svg')] bg-cover bg-center">
@@ -172,8 +184,18 @@ export default function Signup() {
               { id: "fullName", label: "Full Name", icon: User, type: "text" },
               { id: "email", label: "Email", icon: Mail, type: "email" },
               { id: "phone", label: "Phone Number", icon: Phone, type: "tel" },
-              { id: "password", label: "Password", icon: Lock, type: "password" },
-              { id: "confirmPassword", label: "Confirm Password", icon: Lock, type: "password" },
+              {
+                id: "password",
+                label: "Password",
+                icon: Lock,
+                type: "password",
+              },
+              {
+                id: "confirmPassword",
+                label: "Confirm Password",
+                icon: Lock,
+                type: "password",
+              },
             ].map(({ id, label, icon: Icon, type }) => (
               <div key={id} className="space-y-2">
                 <Label htmlFor={id}>{label}</Label>
@@ -188,7 +210,11 @@ export default function Signup() {
                     onChange={handleChange}
                   />
                 </div>
-                {errors[id as keyof ErrorsState] && <p className="text-red-500 text-sm">{errors[id as keyof ErrorsState]}</p>}
+                {errors[id as keyof ErrorsState] && (
+                  <p className="text-red-500 text-sm">
+                    {errors[id as keyof ErrorsState]}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -200,7 +226,10 @@ export default function Signup() {
           >
             {sendingOtp ? "Sending OTP..." : "Create Account"}
           </Button>
-          <GoogleLogin onSuccess={handleGoogleSignup} onError={() => toast.error("Google Signup Failed")} />
+          <GoogleLogin
+            onSuccess={handleGoogleSignup}
+            onError={() => toast.error("Google Signup Failed")}
+          />
         </CardContent>
       </Card>
 

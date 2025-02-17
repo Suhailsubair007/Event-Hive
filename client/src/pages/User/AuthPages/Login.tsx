@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
+import {setUserDetails} from '../../../redux/userSlice'
+import { useDispatch } from "react-redux";
+
 import { toast } from "sonner";
 
 interface GoogleLoginData {
@@ -21,12 +24,14 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const mutation = useMutation({
     mutationFn: LoginUser,
     onSuccess: (data) => {
       if (data.success) {
-        toast.success("Login Sucessfull");
+        toast.success("Login Successful");
+        dispatch(setUserDetails(data.result)); 
         navigate("/landing");
       } else {
         alert("Login failed. Please check your credentials.");
@@ -40,7 +45,11 @@ export default function Login() {
   const googleLoginMutation = useMutation({
     mutationFn: googleLogin,
     onSuccess: (data) => {
-      console.log("User Data:", data.user);
+      const userObject = {
+        name: data.user.name,
+        email: data.user.email
+      };
+      dispatch(setUserDetails(userObject)); 
       toast.success("Google Login successful!");
       navigate("/landing");
     },
