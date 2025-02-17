@@ -6,9 +6,9 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden bg-gray-50">
         <ScrollArea className="h-full">
-          <div className="container p-6">
+          <div className="p-6">
             <Outlet />
           </div>
         </ScrollArea>
