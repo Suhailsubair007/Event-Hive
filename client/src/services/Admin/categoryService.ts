@@ -15,13 +15,13 @@ export const categoryService = {
   },
 
   addCategory: async (categoryData: CategoryData) => {
-    const response = await axiosInstance.post(`$/categories`, categoryData);
+    const response = await axiosInstance.post('/admin/categories', categoryData);
     return response.data;
   },
 
   editCategory: async (id: string, categoryData: CategoryData) => {
-    const response = await axiosInstance.put(
-      `$/categories/${id}`,
+    const response = await axiosInstance.post(
+      `/admin/categories/${id}`,
       categoryData
     );
     return response.data;

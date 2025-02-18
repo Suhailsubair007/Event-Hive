@@ -68,11 +68,10 @@ export default function Signup() {
   const { mutate: registerMutation, isPending: registering } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      dispatch(setUserDetails(data)); 
+      dispatch(setUserDetails(data));
       toast.success("Registration successful!");
       setOtpModal(false);
       navigate("/preference");
-
     },
     onError: (error) => {
       console.error("Signup Error:", error);
@@ -83,8 +82,10 @@ export default function Signup() {
   const googleSignupMutate = useMutation({
     mutationFn: googleSignup,
     onSuccess: (data: GoogleSignup) => {
-      console.log("User Data:", data);
-      toast.success("Google Signup successful!");
+      // console.log("User Data:", data);
+      console.log("dataaaa========",data)
+      dispatch(setUserDetails(data));
+      toast.success("Google Signup successfull!");
       navigate("/preference");
     },
     onError: (error: any) => {
@@ -226,10 +227,20 @@ export default function Signup() {
           >
             {sendingOtp ? "Sending OTP..." : "Create Account"}
           </Button>
-          <GoogleLogin
-            onSuccess={handleGoogleSignup}
-            onError={() => toast.error("Google Signup Failed")}
-          />
+          <div className="flex justify-center items-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSignup}
+              onError={() => toast.error("Google Signup Failed")}
+            />
+          </div>
+          <div className="text-center">
+            <span className="text-muted-foreground">
+              Alredy have an account?{" "}
+            </span>
+            <Button variant="link" className="p-0 text-[#7848F4]" onClick={() => navigate("/login")}>
+              Log in
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

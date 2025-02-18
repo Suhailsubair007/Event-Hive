@@ -165,7 +165,7 @@ export default function Login() {
             <span className="text-muted-foreground">
               Don't have an account?{" "}
             </span>
-            <Button variant="link" className="p-0 text-[#7848F4]">
+            <Button variant="link" className="p-0 text-[#7848F4]" onClick={() => navigate("/signup")}>
               Sign up
             </Button>
           </div>

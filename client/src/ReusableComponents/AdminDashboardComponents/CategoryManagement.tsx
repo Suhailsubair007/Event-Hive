@@ -57,8 +57,10 @@ export default function CategoryManagement() {
     setIsLoading(true);
     try {
       if (editingCategory) {
+        // Use editCategory when editing
         await categoryService.editCategory(editingCategory._id!, formData);
       } else {
+        // Use addCategory when adding
         await categoryService.addCategory(formData);
       }
       fetchCategories();
@@ -90,20 +92,21 @@ export default function CategoryManagement() {
     setIsAddModalOpen(true);
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
-  
+
     setIsLoading(true);
     try {
       const imageUrl = await uploadImageToCloudinary(file);
-      setFormData((prev) => ({ ...prev, imageUrl: imageUrl || "" })); 
+      setFormData((prev) => ({ ...prev, imageUrl: imageUrl || "" }));
     } catch (error) {
       console.error("Error uploading image:", error);
     }
     setIsLoading(false);
   };
-  
 
   return (
     <div className="w-full px-4 py-6">

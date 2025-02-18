@@ -24,6 +24,7 @@ import {
   updateUserPreferences,
 } from "../../../services/Auth/authService";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const INTERESTS = [
   "Music Concerts",
@@ -55,6 +56,7 @@ const SAMPLE_LOCATIONS: LocationSearchResult[] = [
 ];
 
 export default function PreferencesPage() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] =
     useState<LocationSearchResult | null>(null);
@@ -79,6 +81,7 @@ export default function PreferencesPage() {
   const { mutate: updatePreferences } = useMutation({
     mutationFn: updateUserPreferences,
     onSuccess: () => {
+      navigate('/landing')
       toast.success("Preferences updated successfully!");
     },
     onError: (error: any) => {
