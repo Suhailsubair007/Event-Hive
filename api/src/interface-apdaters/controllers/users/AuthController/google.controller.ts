@@ -10,6 +10,7 @@ export class GoogleController {
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, name, sub: googleId } = req.body;
+      console.log(email , name, googleId)
       const user = await this.googleLogin.execute(email, name, googleId);
       res.status(200).json({
         success: true,

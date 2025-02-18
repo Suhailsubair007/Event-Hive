@@ -16,6 +16,7 @@ export class CategoryContoller {
   async add(req: Request, res: Response): Promise<void> {
     try {
       const { name, description, imageUrl } = req.body;
+      console.log("add category")
       const category: ICategory = {
         name,
         description,
@@ -57,6 +58,7 @@ export class CategoryContoller {
 
   async listUnlist(req: Request, res: Response): Promise<void> {
     try {
+      console.log("In list in unlist")
       const { id } = req.params;
       const { isListed } = req.body;
 
@@ -72,6 +74,7 @@ export class CategoryContoller {
 
   async getAll(req: Request, res: Response): Promise<void> {
     try {
+      console.log("IN get category,,,")
       const categories = await this.getAllCategories.execute();
       res.status(200).json({ success: true, categories });
     } catch (error: any) {
