@@ -62,7 +62,7 @@ export default function PreferencesPage() {
     useState<LocationSearchResult | null>(null);
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
 
-  const email = useSelector((state: any) => state.user.userInfo.user.email);
+  const email = useSelector((state: any) => state?.user?.userInfo?.user?.email);
   console.log("email", email);
 
   const getCurrentLocation = () => {
@@ -81,7 +81,7 @@ export default function PreferencesPage() {
   const { mutate: updatePreferences } = useMutation({
     mutationFn: updateUserPreferences,
     onSuccess: () => {
-      navigate('/landing')
+      navigate("/landing");
       toast.success("Preferences updated successfully!");
     },
     onError: (error: any) => {

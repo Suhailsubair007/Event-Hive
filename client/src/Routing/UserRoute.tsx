@@ -35,14 +35,7 @@ const UserRoute: React.FC = () => {
             </ProtectUserLogin>
           }
         />
-        <Route
-          path="/preference"
-          element={
-            <UserPrivate>
-              <PreferencesPage />
-            </UserPrivate>
-          }
-        />
+        <Route path="/preference" element={<PreferencesPage />} />
         <Route
           path="/landing"
           element={
