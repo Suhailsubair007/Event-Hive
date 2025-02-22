@@ -10,7 +10,7 @@ interface ProtectUserLoginProps {
 const UserPrivate: React.FC<ProtectUserLoginProps> = ({ children }) => {
   const userData = useSelector((state: RootState) => state.user.userInfo);
 
-  if (userData) {
+  if (!userData) {
     return <Navigate to="/" />;
   }
 
