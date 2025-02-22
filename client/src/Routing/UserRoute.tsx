@@ -6,7 +6,7 @@ import PreferencesPage from "@/pages/User/AuthPages/Preference";
 import Landing from "@/pages/User/Landing/Landing";
 import MainLanding from "@/pages/User/Landing/MainLanding";
 import ProtectUserLogin from "./protected/User/ProtectUserLogin";
-
+import UserPrivate from "./protected/User/UserPrivate";
 const UserRoute: React.FC = () => {
   return (
     <>
@@ -35,8 +35,22 @@ const UserRoute: React.FC = () => {
             </ProtectUserLogin>
           }
         />
-        <Route path="/preference" element={<PreferencesPage />} />
-        <Route path="/landing" element={<Landing />} />
+        <Route
+          path="/preference"
+          element={
+            <UserPrivate>
+              <PreferencesPage />
+            </UserPrivate>
+          }
+        />
+        <Route
+          path="/landing"
+          element={
+            <UserPrivate>
+              <Landing />
+            </UserPrivate>
+          }
+        />
       </Routes>
     </>
   );
