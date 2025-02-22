@@ -34,11 +34,11 @@ export default function Login() {
         dispatch(setUserDetails(data.result)); 
         navigate("/landing");
       } else {
-        alert("Login failed. Please check your credentials.");
+        toast.error("Login failed. Please check your credentials.");
       }
     },
     onError: () => {
-      alert("An error occurred while logging in. Please try again.");
+      toast.error("An error occurred while logging in. Please try again.");
     },
   });
 

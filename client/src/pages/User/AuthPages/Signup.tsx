@@ -61,7 +61,7 @@ export default function Signup() {
     onSuccess: () => handleRegister(), // If OTP is correct, proceed to registration
     onError: (error) => {
       console.error("OTP Verification Error:", error);
-      alert("Invalid OTP. Please try again.");
+      toast.error("Invalid OTP. Please try again.");
     },
   });
 
@@ -75,7 +75,7 @@ export default function Signup() {
     },
     onError: (error) => {
       console.error("Signup Error:", error);
-      alert("Signup failed. Please try again.");
+      toast.error("Signup failed. Please try again.");
     },
   });
 
