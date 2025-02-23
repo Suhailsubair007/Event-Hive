@@ -4,6 +4,7 @@ import connectDB from "./shared/config/db";
 import cors from "cors";
 import userRoutes from "./frameworks/routes/userRoutes";
 import adminRoutes from "./frameworks/routes/adminRoutes";
+import eventRoutes from "./frameworks/routes/eventRoutes";
 
 import { errorHandler } from "./interface-apdaters/middleware/errorHandler";
 
@@ -23,6 +24,7 @@ app.use(
 
 app.use(express.json());
 app.use("/api/auth", userRoutes);
+app.use("/api/event", eventRoutes);
 app.use("/api/admin", adminRoutes);
 app.use(errorHandler); // Global error handler
 
