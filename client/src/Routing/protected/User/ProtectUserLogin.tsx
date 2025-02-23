@@ -11,7 +11,7 @@ const ProtectUserLogin: React.FC<ProtectUserLoginProps> = ({ children }) => {
   const userData = useSelector((state: RootState) => state.user.userInfo);
 
   if (userData) {
-    return <Navigate to="/landing" />;
+    return <Navigate to={userData.hasCompletedPreferences ? "/landing" : "/preference"} />;
   }
 
   return <>{children}</>;

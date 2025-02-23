@@ -71,7 +71,7 @@ export default function Signup() {
       dispatch(setUserDetails(data));
       toast.success("Registration successful!");
       setOtpModal(false);
-      navigate("/preference");
+      navigate("/preference", { replace: true });
     },
     onError: (error) => {
       console.error("Signup Error:", error);
