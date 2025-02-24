@@ -1,4 +1,8 @@
 import express from "express";
+import {
+  authenticateToken,
+  authorizeRoles,
+} from "../../interface-apdaters/middleware/auth";
 
 import {
   addEventController,
@@ -7,8 +11,17 @@ import {
 
 const eventRoutes = express.Router();
 
-eventRoutes.post("/add", (req, res) => addEventController.addEvent(req, res));
-eventRoutes.post("/edit/:eventId", (req, res) => editEventController.editEvent(req, res));
-
+eventRoutes.post(
+  "/add",
+  authenticateToken,
+  authorizeRoles(["user"]),
+  (req, res) => addEventController.addEvent(req, res)
+);
+eventRoutes.post(
+  "/edit/:eventId",
+  authenticateToken,
+  authorizeRoles(["user"]),
+  (req, res) => editEventController.editEvent(req, res)
+);
 
 export default eventRoutes;

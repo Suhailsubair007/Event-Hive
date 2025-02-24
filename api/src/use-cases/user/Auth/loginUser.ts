@@ -1,6 +1,7 @@
 // src/application/use-cases/LoginUser.ts
 import { IUserRepository } from "../../../entities/repositoryInterface/User/interface.loginRepository";
 import { CustomError } from "../../../shared/utils/CustomError";
+import { TokenService } from "../../../frameworks/Servise/Tocken.servise";
 import bcrypt from "bcrypt";
 
 export class LoginUser {
@@ -9,7 +10,11 @@ export class LoginUser {
   async execute(
     email: string,
     password: string
-  ): Promise<{ name: string; email: string; id: string }> {
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    user: { name: string; email: string; id: string };
+  }> {
     if (!email || !password) {
       throw new CustomError("All fields are required", 400);
     }
@@ -31,10 +36,23 @@ export class LoginUser {
       throw new CustomError("Invalid credentials", 401);
     }
 
-    return {
-      name: user.name,
-      email: user.email,
+    const accessToken = TokenService.generateAccessToken({
       id: user._id!,
+      role: user.role,
+    });
+    const refreshToken = TokenService.generateRefreshToken({
+      id: user._id!,
+      role: user.role,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        name: user.name,
+        email: user.email,
+        id: user._id!,
+      },
     };
   }
 }

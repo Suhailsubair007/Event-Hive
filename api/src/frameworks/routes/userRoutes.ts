@@ -6,6 +6,7 @@ import {
   verifyOtpController,
   userPreferenceController,
   googleController,
+  refreshTokenController
 } from "../di/User/Auth.dependencyContainer";
 
 const userRoutes = express.Router();
@@ -27,5 +28,8 @@ userRoutes.post("/google-sigup", (req, res) =>
   googleController.signup(req, res)
 );
 
+userRoutes.post("/refresh", (req, res) =>
+  refreshTokenController.refreshAccessToken(req, res)
+);
 
 export default userRoutes;
