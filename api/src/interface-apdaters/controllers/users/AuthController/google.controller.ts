@@ -1,18 +1,17 @@
 import { Request, Response } from "express";
-import { GoogleSignUp } from "../../../../use-cases/user/Auth/GoogleLogin";
-import { GoogleLogin } from "../../../../use-cases/user/Auth/GoogleSignUp";
+import { GoogleLogin } from "../../../../use-cases/user/Auth/GoogleLogin";
+import { GoogleSignUp } from "../../../../use-cases/user/Auth/GoogleSignup";
 
 export class GoogleController {
   constructor(
     private googleLogin: GoogleLogin,
     private googleSignup: GoogleSignUp
   ) {}
-
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, name, sub: googleId } = req.body;
       console.log(email, name, googleId);
-      const { accessToken, user, refreshToken } =
+      const { user, accessToken, refreshToken } =
         await this.googleLogin.execute(email, name, googleId);
       res.status(200).json({
         success: true,
@@ -31,7 +30,6 @@ export class GoogleController {
       res.status(error.statusCode || 500).json({ message: error.message });
     }
   }
-
   async signup(req: Request, res: Response): Promise<void> {
     try {
       const { email, name, sub: googleId } = req.body;
