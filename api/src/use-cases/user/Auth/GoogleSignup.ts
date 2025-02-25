@@ -15,6 +15,7 @@ export class GoogleSignUp {
     user: { name: string; email: string; id: string; role: string };
   }> {
     let user = await this.userRepository.findByEmail(email);
+    console.log("Google signup anne njn--->", user);
 
     if (!user) {
       user = await this.userRepository.createUser({
