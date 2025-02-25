@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
-import {setUserDetails} from '../../../redux/userSlice'
+import { setUserDetails } from "../../../redux/userSlice";
 import { useDispatch } from "react-redux";
 
 import { toast } from "sonner";
@@ -29,9 +29,18 @@ export default function Login() {
   const mutation = useMutation({
     mutationFn: LoginUser,
     onSuccess: (data) => {
+      console.log("datata after normal login", data);
+      const userData = {
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        hasCompletedPreferences: true,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
       if (data.success) {
         toast.success("Login Successful");
-        dispatch(setUserDetails(data.result)); 
+        dispatch(setUserDetails(userData));
         navigate("/landing");
       } else {
         toast.error("Login failed. Please check your credentials.");
@@ -45,11 +54,15 @@ export default function Login() {
   const googleLoginMutation = useMutation({
     mutationFn: googleLogin,
     onSuccess: (data) => {
-      const userObject = {
-        name: data.user.name,
-        email: data.user.email
+      const userData = {
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        hasCompletedPreferences: true,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
       };
-      dispatch(setUserDetails(userObject)); 
+      dispatch(setUserDetails(userData));
       toast.success("Google Login successful!");
       navigate("/landing");
     },
@@ -67,7 +80,6 @@ export default function Login() {
   };
 
   const handleGoogleLogin = (credentialResponse: CredentialResponse) => {
-    
     if (!credentialResponse.credential) {
       toast.error("Google login failed. No credentials received.");
       return;
@@ -75,11 +87,10 @@ export default function Login() {
 
     const decodedToken: any = jwtDecode(credentialResponse.credential);
 
-
     const googleLoginData: GoogleLoginData = {
       name: decodedToken.name,
       email: decodedToken.email,
-      sub: decodedToken.sub, 
+      sub: decodedToken.sub,
     };
 
     console.log("Decoded JWT Data:", googleLoginData);
@@ -165,7 +176,11 @@ export default function Login() {
             <span className="text-muted-foreground">
               Don't have an account?{" "}
             </span>
-            <Button variant="link" className="p-0 text-[#7848F4]" onClick={() => navigate("/signup")}>
+            <Button
+              variant="link"
+              className="p-0 text-[#7848F4]"
+              onClick={() => navigate("/signup")}
+            >
               Sign up
             </Button>
           </div>
