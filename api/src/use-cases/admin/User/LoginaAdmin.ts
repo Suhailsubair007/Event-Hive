@@ -1,6 +1,8 @@
 import { IAdminRepository } from "../.../../../../entities/repositoryInterface/Admin/interface.loginRepository";
 import { CustomError } from "../../../shared/utils/CustomError";
+import { TokenService } from "../../../frameworks/Servise/Tocken.servise";
 import bcrypt from "bcrypt";
+
 
 export class AdminLogin {
   constructor(private userRepository: IAdminRepository) {}
@@ -8,7 +10,7 @@ export class AdminLogin {
   async execute(
     email: string,
     password: string
-  ): Promise<{ name: string; email: string }> {
+  ): Promise<{ name: string; email: string; accessToken: string; refreshToken: string }>{
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new CustomError("Invalid email or password", 401);
@@ -26,9 +28,21 @@ export class AdminLogin {
       throw new CustomError("Invalid email or password", 401);
     }
 
+    const accessToken = TokenService.generateAccessToken({
+      id: user._id!,
+      role: user.role,
+    });
+    const refreshToken = TokenService.generateRefreshToken({
+      id: user._id!,
+      role: user.role,
+    });
+
     return {
       name: user.name,
       email: user.email,
+      accessToken,
+      refreshToken
     };
+    
   }
 }

@@ -7,30 +7,49 @@ export class GoogleController {
     private googleLogin: GoogleLogin,
     private googleSignup: GoogleSignUp
   ) {}
+
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, name, sub: googleId } = req.body;
-      console.log(email , name, googleId)
-      const user = await this.googleLogin.execute(email, name, googleId);
+      console.log(email, name, googleId);
+      const { accessToken, user, refreshToken } =
+        await this.googleLogin.execute(email, name, googleId);
       res.status(200).json({
         success: true,
-        message: "Login successful",
-        user,
+        message: "Google login successful",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        refreshToken,
       });
     } catch (error: any) {
       console.error(error);
       res.status(error.statusCode || 500).json({ message: error.message });
     }
   }
+
   async signup(req: Request, res: Response): Promise<void> {
     try {
       const { email, name, sub: googleId } = req.body;
 
-      const user = await this.googleSignup.execute(name, email, googleId);
+      const { user, accessToken, refreshToken } =
+        await this.googleSignup.execute(name, email, googleId);
 
       res.status(200).json({
-        message: "User successfully signed in",
-        user,
+        success: true,
+        message: "Google login successful",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+        accessToken,
+        refreshToken,
       });
     } catch (error: any) {
       console.error("Error during Google sign-in:", error);
