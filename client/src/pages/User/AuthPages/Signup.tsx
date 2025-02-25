@@ -68,10 +68,18 @@ export default function Signup() {
   const { mutate: registerMutation, isPending: registering } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      dispatch(setUserDetails(data));
+      const userData = {
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        hasCompletedPreferences: false,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
+      dispatch(setUserDetails(userData));
       toast.success("Registration successful!");
       setOtpModal(false);
-      navigate("/preference", { replace: true });
+      navigate("/preference");
     },
     onError: (error) => {
       console.error("Signup Error:", error);
@@ -82,9 +90,7 @@ export default function Signup() {
   const googleSignupMutate = useMutation({
     mutationFn: googleSignup,
     onSuccess: (data: GoogleSignup) => {
-      // console.log("User Data:", data);
       console.log("dataaaa========",data)
-      dispatch(setUserDetails(data));
       toast.success("Google Signup successfull!");
       navigate("/preference");
     },

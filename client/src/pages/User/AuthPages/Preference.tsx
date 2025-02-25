@@ -62,7 +62,7 @@ export default function PreferencesPage() {
     useState<LocationSearchResult | null>(null);
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
 
-  const email = useSelector((state: any) => state?.user?.userInfo?.user?.email);
+  const email = useSelector((state: any) => state?.user?.userInfo?.email);
   console.log("email", email);
 
   const getCurrentLocation = () => {

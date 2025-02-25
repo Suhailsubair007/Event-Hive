@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
@@ -9,12 +10,7 @@ interface UserPrivateProps {
 
 const UserPrivate: React.FC<UserPrivateProps> = ({ children }) => {
   const userData = useSelector((state: RootState) => state.user.userInfo);
-  
-  console.log("UserPrivate -> userData", userData);
-
-  if (userData === null) {
-    return <></>;
-  }
+  console.log('UserPrivate -> userData', userData);
 
   if (!userData || userData.role !== "user") {
     return <Navigate to="/" />;
