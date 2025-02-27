@@ -19,7 +19,14 @@ export class RegisterUser {
     if (existingUser) throw new CustomError("User already exists", 400);
 
     const hashedPassword = await securePassword(password);
-    const newUser: Iuser = { ...userData, password: hashedPassword };
+
+    // const newUser: Iuser = { ...userData, password: hashedPassword };
+    const newUser: Iuser = {
+      ...userData,
+      password: hashedPassword,
+      isActive: true,
+      role: "user",
+    };
 
     const createdUser = await this.userRepository.createUser(newUser);
 

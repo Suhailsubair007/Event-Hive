@@ -10,7 +10,7 @@ export class GoogleAuthRepository implements IUserRepository {
     const newUser = new UserModal(user);
     return await newUser.save();
   }
-  // async updateUser(id: string, updates: Partial<Iuser>): Promise<Iuser | null> {
-  //   return UserModal.findByIdAndUpdate(id, updates, { new: true });
-  // }
+  async updateUser(id: string, updates: Partial<Iuser>): Promise<Iuser | null> {
+    return UserModal.findByIdAndUpdate(id, updates, { new: true });
+  }
 }

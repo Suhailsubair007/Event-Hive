@@ -17,6 +17,11 @@ export class GoogleLogin {
     user: { name: string; email: string; id: string; role: string };
   }> {
     let user = await this.userRepository.findByEmail(email);
+    console.log("Finded user from the google login", user);
+
+    if (user && !user.googleId) {
+      user = await this.userRepository.updateUser(user._id!, { googleId });
+    }
 
     if (user && !user.isActive) {
       throw new CustomError("User is blocked. Please contact support.", 403);
@@ -27,6 +32,8 @@ export class GoogleLogin {
         email,
         name,
         googleId,
+        isActive: true,
+        role: "user",
       });
     }
 
