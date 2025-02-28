@@ -1,6 +1,7 @@
 import { IUserRepository } from "../../../entities/repositoryInterface/User/Interface.userRepository";
 import { Iuser } from "../../../entities/modelInterface/User";
 import { TokenService } from "../../../frameworks/Servise/Tocken.servise";
+import { CustomError } from "../../../shared/utils/CustomError";
 
 export class GoogleSignUp {
   constructor(private userRepository: IUserRepository) {}
@@ -16,14 +17,21 @@ export class GoogleSignUp {
   }> {
     let user = await this.userRepository.findByEmail(email);
 
-    if (user && !user.googleId) {
-      user = await this.userRepository.updateUser(user._id!, { googleId });
-    }
+    if (user) {
+      if (!user.googleId) {
+        user = await this.userRepository.updateUser(user._id!, {
+          googleId,
+          isActive: true,
+        });
+      }
 
-    if (!user) {
+      if (!user?.isActive) {
+        throw new CustomError("User is not active", 403);
+      }
+    } else {
       user = await this.userRepository.createUser({
-        name,
         email,
+        name,
         googleId,
         isActive: true,
         role: "user",

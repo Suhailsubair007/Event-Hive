@@ -10,9 +10,8 @@ export class GoogleController {
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, name, sub: googleId } = req.body;
-      console.log(email, name, googleId);
       const { user, accessToken, refreshToken } =
-        await this.googleLogin.execute(email, name, googleId);
+        await this.googleLogin.execute(name, googleId, email);
       res.status(200).json({
         success: true,
         message: "Google login successful",
@@ -35,11 +34,11 @@ export class GoogleController {
       const { email, name, sub: googleId } = req.body;
 
       const { user, accessToken, refreshToken } =
-        await this.googleSignup.execute(name, email, googleId);
+        await this.googleSignup.execute(name, googleId, email);
 
       res.status(200).json({
         success: true,
-        message: "Google login successful",
+        message: "Google signup successful",
         user: {
           id: user.id,
           name: user.name,
@@ -51,7 +50,7 @@ export class GoogleController {
       });
     } catch (error: any) {
       console.error("Error during Google sign-in:", error);
-      res.status(500).json({ message: "Failed to authenticate Google user" });
+      res.status(error.statusCode || 500).json({ message: error.message });
     }
   }
 }

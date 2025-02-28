@@ -3,7 +3,6 @@ import { Iuser } from "../../../entities/modelInterface/User";
 import { CustomError } from "../../../shared/utils/CustomError";
 import { TokenService } from "../../../frameworks/Servise/Tocken.servise";
 
-
 export class GoogleLogin {
   constructor(private userRepository: IUserRepository) {}
 
@@ -17,17 +16,19 @@ export class GoogleLogin {
     user: { name: string; email: string; id: string; role: string };
   }> {
     let user = await this.userRepository.findByEmail(email);
-    console.log("Finded user from the google login", user);
 
-    if (user && !user.googleId) {
-      user = await this.userRepository.updateUser(user._id!, { googleId });
-    }
+    if (user) {
+      if (!user.googleId) {
+        user = await this.userRepository.updateUser(user._id!, {
+          googleId,
+          isActive: true,
+        });
+      }
 
-    if (user && !user.isActive) {
-      throw new CustomError("User is blocked. Please contact support.", 403);
-    }
-
-    if (!user) {
+      if (!user?.isActive) {
+        throw new CustomError("User is not active", 403);
+      }
+    } else {
       user = await this.userRepository.createUser({
         email,
         name,
@@ -37,14 +38,14 @@ export class GoogleLogin {
       });
     }
 
-        const accessToken = TokenService.generateAccessToken({
-          id: user._id!,
-          role: user.role,
-        });
-        const refreshToken = TokenService.generateRefreshToken({
-          id: user._id!,
-          role: user.role,
-        });
+    const accessToken = TokenService.generateAccessToken({
+      id: user._id!,
+      role: user.role,
+    });
+    const refreshToken = TokenService.generateRefreshToken({
+      id: user._id!,
+      role: user.role,
+    });
 
     return {
       accessToken,

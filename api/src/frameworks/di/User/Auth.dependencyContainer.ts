@@ -18,6 +18,7 @@ import { GoogleSignUp } from "../../../use-cases/user/Auth/GoogleSignup";
 import { GoogleLogin } from "../../../use-cases/user/Auth/GoogleLogin";
 import { GoogleController } from "../../../interface-apdaters/controllers/users/AuthController/google.controller";
 import { RefreshTokenController } from "../../../interface-apdaters/controllers/users/AuthController/refreshTocken.controller";
+import { GoogleAuthRepository } from "../../../interface-apdaters/repositories/User/Auth/google.repository";
 
 // Instantiate repositories
 const userRepository = new UserRepository();
@@ -50,8 +51,9 @@ const userPreferenceController = new UserPreferenceController(
   updateUserPreferenceUseCase
 );
 
-const googleSignUpUseCase = new GoogleSignUp(userRepository);
-const googleLoginUseCase = new GoogleLogin(userRepository);
+const googleAuthRepository = new GoogleAuthRepository();  // Add this line
+const googleSignUpUseCase = new GoogleSignUp(googleAuthRepository);
+const googleLoginUseCase = new GoogleLogin(googleAuthRepository);
 
 const googleController = new GoogleController(
   googleLoginUseCase,
@@ -66,5 +68,5 @@ export {
   verifyOtpController,
   userPreferenceController,
   googleController,
-  refreshTokenController
+  refreshTokenController,
 };
