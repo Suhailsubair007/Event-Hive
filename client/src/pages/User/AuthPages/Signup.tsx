@@ -89,8 +89,17 @@ export default function Signup() {
 
   const googleSignupMutate = useMutation({
     mutationFn: googleSignup,
-    onSuccess: (data: GoogleSignup) => {
-      console.log("dataaaa========",data)
+    onSuccess: (data) => {
+      console.log("dataaaa========", data);
+      const userData = {
+        id: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+        hasCompletedPreferences: true,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
+      dispatch(setUserDetails(userData));
       toast.success("Google Signup successfull!");
       navigate("/preference");
     },
@@ -243,7 +252,11 @@ export default function Signup() {
             <span className="text-muted-foreground">
               Alredy have an account?{" "}
             </span>
-            <Button variant="link" className="p-0 text-[#7848F4]" onClick={() => navigate("/login")}>
+            <Button
+              variant="link"
+              className="p-0 text-[#7848F4]"
+              onClick={() => navigate("/login")}
+            >
               Log in
             </Button>
           </div>
