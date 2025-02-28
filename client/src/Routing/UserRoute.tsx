@@ -7,6 +7,8 @@ import Landing from "@/pages/User/Landing/Landing";
 import MainLanding from "@/pages/User/Landing/MainLanding";
 import ProtectUserLogin from "./protected/User/ProtectUserLogin";
 import UserPrivate from "./protected/User/UserPrivate";
+import ProfilePage from "@/pages/User/UserProfile/ProfilePage";
+import ProfileUpdate from "@/ReusableComponents/UserProfileComponets/ProfileUpdate";
 const UserRoute: React.FC = () => {
   return (
     <>
@@ -51,6 +53,11 @@ const UserRoute: React.FC = () => {
             </UserPrivate>
           }
         />
+
+        {/* Profile Section with Nested Routes */}
+        <Route path="/profile" element={<ProfilePage />}>
+          <Route path="update" element={<ProfileUpdate />} />
+        </Route>
       </Routes>
     </>
   );
