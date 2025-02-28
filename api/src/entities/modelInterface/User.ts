@@ -9,6 +9,8 @@ export interface Iuser {
   googleId?: string;
   isActive?: boolean;
   isPremiumUser?: boolean;
+  gender?: string;
+  country?: string;
   location?: {
     latitude: number;
     longitude: number;

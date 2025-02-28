@@ -15,6 +15,8 @@ const UserSchema = new Schema<Iuser>({
     latitude: { type: Number },
     longitude: { type: Number },
   },
+  gender: { type: String },
+  country: { type: String },
   preferences: { type: [String], default: [] },
   timestamp: { type: Date, default: Date.now },
 });
