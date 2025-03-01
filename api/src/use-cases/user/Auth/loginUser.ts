@@ -12,7 +12,7 @@ export class LoginUser {
   ): Promise<{
     accessToken: string;
     refreshToken: string;
-    user: { name: string; email: string; id: string; role: string };
+    user: { name: string; email: string; id: string; role: string;  location?: { latitude: number; longitude: number };  };
   }>{
     if (!email || !password) {
       throw new CustomError("All fields are required", 400);
@@ -52,6 +52,10 @@ export class LoginUser {
         name: user.name,
         email: user.email,
         role: user.role || "user", 
+        location: user.location ? {
+          latitude: user.location.latitude,
+          longitude: user.location.longitude
+        } : undefined,
       },
     };
   }
