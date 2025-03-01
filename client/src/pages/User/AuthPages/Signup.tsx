@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { OTPVerification } from "../../../ReusableComponents/Login/OtpModal";
+import { OtpAnimation } from "@/ReusableComponents/LoadingAnimations/OtpAnimation";
 import {
   sendOtp,
   verifyOtp,
@@ -166,8 +167,6 @@ export default function Signup() {
       email: decodedToken.email,
       sub: decodedToken.sub,
     };
-
-    console.log("Decoded JWT Data:", googleSignupData);
     googleSignupMutate.mutate(googleSignupData);
   };
 
@@ -240,7 +239,7 @@ export default function Signup() {
             disabled={sendingOtp}
             className="w-full h-12 text-lg bg-[#7848F4] hover:bg-[#7848F4]/90"
           >
-            {sendingOtp ? "Sending OTP..." : "Create Account"}
+            {sendingOtp ? <OtpAnimation /> : "Create Account"}
           </Button>
           <div className="flex justify-center items-center">
             <GoogleLogin
