@@ -9,6 +9,7 @@ import ProtectUserLogin from "./protected/User/ProtectUserLogin";
 import UserPrivate from "./protected/User/UserPrivate";
 import ProfilePage from "@/pages/User/UserProfile/ProfilePage";
 import ProfileUpdate from "@/ReusableComponents/UserProfileComponets/ProfileUpdate";
+import GrandHostPromo from "@/ReusableComponents/UserProfileComponets/GrandHost";
 const UserRoute: React.FC = () => {
   return (
     <>
@@ -57,6 +58,7 @@ const UserRoute: React.FC = () => {
         {/* Profile Section with Nested Routes */}
         <Route path="/profile" element={<ProfilePage />}>
           <Route path="update" element={<ProfileUpdate />} />
+          <Route path="premium" element={<GrandHostPromo />} />
         </Route>
       </Routes>
     </>
