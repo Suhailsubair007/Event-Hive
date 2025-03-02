@@ -5,6 +5,7 @@ import {
   authenticateToken,
   authorizeRoles,
 } from "../../interface-apdaters/middleware/auth";
+import { listAllEventsController } from "../di/Admin/Events.dependencyContainer";
 
 const adminRoutes = express.Router();
 
@@ -38,6 +39,10 @@ adminRoutes.get(
   authenticateToken,
   authorizeRoles(["admin"]),
   (req, res) => userController.getUsers(req, res)
+);
+
+adminRoutes.get("/events", (req, res) =>
+  listAllEventsController.listAllEvents(req, res)
 );
 
 adminRoutes.post("/login", (req, res) => userController.adminLogin(req, res));
