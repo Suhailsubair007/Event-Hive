@@ -91,7 +91,6 @@ export default function Signup() {
   const googleSignupMutate = useMutation({
     mutationFn: googleSignup,
     onSuccess: (data) => {
-      console.log("dataaaa========", data);
       const userData = {
         id: data.user.id,
         email: data.user.email,

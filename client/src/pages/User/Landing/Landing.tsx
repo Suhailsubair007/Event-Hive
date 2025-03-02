@@ -6,9 +6,10 @@ import InterestBasedEvents from "@/ReusableComponents/LandingReusableComponents/
 
 const Landing = () => {
   return (
+    
     <div className="min-h-screen">
     <Header />
-    <main className="pt-16">
+    <main className="pt-10">
       <Hero />
       <EventsNearYou />
       <InterestBasedEvents />
