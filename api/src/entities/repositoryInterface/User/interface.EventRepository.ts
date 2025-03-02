@@ -5,4 +5,6 @@ export interface IEventRepository {
   updateEvent(eventId: string, event: Partial<Event>): Promise<Event | null>;
   findEventByTitle(title: string): Promise<Event | null>;
   markExpiredEvents(): Promise<void>;
+  listEvents(page: number, limit: number): Promise<Event[]>;
+  deleteEvent(eventId: string): Promise<void>
 }

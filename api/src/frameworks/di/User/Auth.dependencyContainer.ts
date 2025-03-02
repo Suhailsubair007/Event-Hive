@@ -1,4 +1,3 @@
-// src/di/dependencyContainer.ts
 import { UserController } from "../../../interface-apdaters/controllers/users/AuthController/UserController";
 import { RegisterUser } from "../../../use-cases/user/Auth/RegisterUser";
 import { UserRepository } from "../../../interface-apdaters/repositories/User/Auth/UserRegister.repository";
@@ -19,6 +18,9 @@ import { GoogleLogin } from "../../../use-cases/user/Auth/GoogleLogin";
 import { GoogleController } from "../../../interface-apdaters/controllers/users/AuthController/google.controller";
 import { RefreshTokenController } from "../../../interface-apdaters/controllers/users/AuthController/refreshTocken.controller";
 import { GoogleAuthRepository } from "../../../interface-apdaters/repositories/User/Auth/google.repository";
+import { UpdateUserRepository } from "../../../interface-apdaters/repositories/User/Auth/updatePremiumUser.repository";
+import { UpdateUserPremiumStatus } from "../../../use-cases/user/Auth/UpdateUserPremiumStatus";
+import { UpdateUserPremiumStatusController } from "../../../interface-apdaters/controllers/users/AuthController/updatePremiumStatusController";
 
 // Instantiate repositories
 const userRepository = new UserRepository();
@@ -51,13 +53,21 @@ const userPreferenceController = new UserPreferenceController(
   updateUserPreferenceUseCase
 );
 
-const googleAuthRepository = new GoogleAuthRepository();  // Add this line
+const googleAuthRepository = new GoogleAuthRepository(); // Add this line
 const googleSignUpUseCase = new GoogleSignUp(googleAuthRepository);
 const googleLoginUseCase = new GoogleLogin(googleAuthRepository);
 
 const googleController = new GoogleController(
   googleLoginUseCase,
   googleSignUpUseCase
+);
+
+const updateUserRepository = new UpdateUserRepository();
+const updateUserPremiumStatusUseCase = new UpdateUserPremiumStatus(
+  updateUserRepository
+);
+const updateUserPremiumStatusController = new UpdateUserPremiumStatusController(
+  updateUserPremiumStatusUseCase
 );
 
 const refreshTokenController = new RefreshTokenController();
@@ -69,4 +79,5 @@ export {
   userPreferenceController,
   googleController,
   refreshTokenController,
+  updateUserPremiumStatusController,
 };

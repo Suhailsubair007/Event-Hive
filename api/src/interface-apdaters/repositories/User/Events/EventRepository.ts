@@ -44,4 +44,21 @@ export class EventRepository implements IEventRepository {
       { isExpired: true }
     );
   }
+
+  async listEvents(page: number, limit: number): Promise<Event[]> {
+    // const currentDate = new Date();
+    console.log("REached repository");
+    return EventModel.find({ isExpired: false })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
+  }
+
+
+  async deleteEvent(eventId: string): Promise<void> {
+    const deletedEvent = await EventModel.findByIdAndDelete(eventId);
+    if (!deletedEvent) {
+      throw new CustomError("Event not found", 404);
+    }
+  }
 }

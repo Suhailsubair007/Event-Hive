@@ -6,7 +6,8 @@ import {
   verifyOtpController,
   userPreferenceController,
   googleController,
-  refreshTokenController
+  refreshTokenController,
+  updateUserPremiumStatusController
 } from "../di/User/Auth.dependencyContainer";
 
 const userRoutes = express.Router();
@@ -30,6 +31,10 @@ userRoutes.post("/google-sigup", (req, res) =>
 
 userRoutes.post("/refresh", (req, res) =>
   refreshTokenController.refreshAccessToken(req, res)
+);
+
+userRoutes.patch("/users/:userId/premium", (req, res) => 
+  updateUserPremiumStatusController.updatePremiumStatus(req, res)
 );
 
 export default userRoutes;
