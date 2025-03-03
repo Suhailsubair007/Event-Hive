@@ -1,11 +1,35 @@
 import type React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Badge } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(
+  "pk_test_51QyQmyQEbmBrayFW2R6XPL0s157RRkZQemdiWowp84f3X3VY2kN9K4lDFiMIWPrYpBnxpFVMcckLNzgyH1UjyBvE00w2DPwDm8"
+);
 
 const GrandHostPromo: React.FC = () => {
+  const [loading, setLoading] = useState(false);
 
+  const handleCheckout = async () => {
+    setLoading(true);
+    const stripe = await stripePromise;
+    if (!stripe) return;
+
+    const { error } = await stripe.redirectToCheckout({
+      lineItems: [{ price: "price_1QyXPVQEbmBrayFWKrmkdEjR", quantity: 1 }], 
+      mode: "payment",
+      successUrl: `${window.location.origin}/success`,
+      cancelUrl: `${window.location.origin}/cancel`,
+    });
+
+    if (error) {
+      console.error("Stripe Checkout Error:", error);
+    }
+
+    setLoading(false);
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -52,9 +76,9 @@ const GrandHostPromo: React.FC = () => {
             animate="visible"
           >
             <motion.div variants={itemVariants}>
-              <Badge className="mb-6 bg-primary/10 text-primary hover:bg-primary/20 px-4 py-1.5 text-sm font-medium">
+              <div className="mb-6 bg-primary/10 text-primary px-4 py-1.5 text-sm font-medium inline-block rounded-full">
                 Exclusive Opportunity
-              </Badge>
+              </div>
             </motion.div>
 
             <motion.h1
@@ -126,7 +150,7 @@ const GrandHostPromo: React.FC = () => {
                 How to Get Started:
               </h2>
               <p className="text-gray-700 mb-8">
-                To become a Grand Host, a one-time promotion fee of [amount] is
+                To become a Grand Host, a one-time promotion fee of $100 is
                 required. This fee helps us ensure a premium hosting experience
                 for you and our community.
               </p>
@@ -137,8 +161,12 @@ const GrandHostPromo: React.FC = () => {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-6 rounded-xl text-lg font-medium shadow-lg shadow-primary/30 transition-all">
-                Upgrade Now
+              <Button
+                onClick={handleCheckout}
+                disabled={loading}
+                className="bg-primary text-white px-6 py-3 rounded-lg"
+              >
+                {loading ? "Processing..." : "Pay Now"}
               </Button>
             </motion.div>
           </motion.div>
