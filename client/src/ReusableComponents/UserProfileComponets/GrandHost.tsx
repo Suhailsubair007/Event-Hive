@@ -18,7 +18,7 @@ const GrandHostPromo: React.FC = () => {
     if (!stripe) return;
 
     const { error } = await stripe.redirectToCheckout({
-      lineItems: [{ price: "price_1QyXPVQEbmBrayFWKrmkdEjR", quantity: 1 }], 
+      lineItems: [{ price: "price_1QyabTQEbmBrayFWg4Pr7Yw7", quantity: 1 }],
       mode: "payment",
       successUrl: `${window.location.origin}/success`,
       cancelUrl: `${window.location.origin}/cancel`,
