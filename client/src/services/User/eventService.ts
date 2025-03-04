@@ -5,7 +5,7 @@ export const fetchEvents = async (): Promise<Event[]> => {
   const response = await axiosInstance.get("/event/events");
   console.log("Events data-->", response.data);
 
-  // ✅ Fix: Convert API response to match `Event` interface
+
   return response.data.events.map((event: any) => ({
     id: event._id, 
     title: event.title,
@@ -25,11 +25,22 @@ export const fetchEvents = async (): Promise<Event[]> => {
 
 export const createEvent = async (eventData: Event): Promise<Event> => {
   try {
-    console.log("Event dataaaaaa------", eventData);
     const response = await axiosInstance.post("/event/add", eventData);
     return response.data.event;
   } catch (error) {
     console.error("Error creating event:", error);
+    throw error;
+  }
+};
+
+export const editEvent = async (eventId: string, eventData: Partial<Event>): Promise<Event> => {
+  try {
+    console.log("Event data in edit event",eventData)
+    const response = await axiosInstance.post(`/event/edit/${eventId}`, eventData);
+    console.log("Inside the edit event",response.data.event)
+    return response.data.event;
+  } catch (error) {
+    console.error("Error editing event:", error);
     throw error;
   }
 };

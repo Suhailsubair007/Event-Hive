@@ -1,13 +1,25 @@
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type React from "react";
+import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { Event, EventFormData, Location, Ticket } from "../../types/Event-type";
+import { editEvent } from "../../services/User/eventService"; // Import editEvent service
+import { toast } from "sonner";
+import { uploadImageToCloudinary } from "../../utils/imageUpload";
+import type {
+  Event,
+  EventFormData,
+  Location,
+  Ticket,
+} from "../../types/Event-type";
 import { MapPicker } from "./map-picker";
 import { TagInput } from "./tagInput";
 import {
@@ -18,12 +30,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSelector } from "react-redux";
 
 interface EditEventModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (event: Event) => void
-  event: Event
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (event: Event) => void;
+  event: Event;
 }
 
 const CATEGORIES = [
@@ -35,10 +48,18 @@ const CATEGORIES = [
   "Festivals",
   "Networking",
   "Other",
-]
+];
 
-export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventModalProps) {
+export function EditEventModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  event,
+}: EditEventModalProps) {
+  const email = useSelector((state: any) => state?.user?.userInfo?.email);
+
   const [formData, setFormData] = useState<EventFormData>({
+    clientId: "",
     title: "",
     description: "",
     eventDate: "",
@@ -51,24 +72,27 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
     vipTicketCount: 0,
     tags: [],
     location: {
-      latitude: 0,
-      longitude: 0,
+      latitude: 12.9716,
+      longitude: 77.5946,
       address: "",
     },
     posterImageUrl: "",
     category: "",
-  })
+  });
+
+  const [posterImage, setPosterImage] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form data from event
   useEffect(() => {
     if (event) {
-      const normalTicket = event.tickets.find((t) => t.type === "normal")
-      const vipTicket = event.tickets.find((t) => t.type === "VIP")
-
-      const eventDate = new Date(event.eventDate)
-      const formattedDate = eventDate.toISOString().split("T")[0]
+      const normalTicket = event.tickets.find((t) => t.type === "normal");
+      const vipTicket = event.tickets.find((t) => t.type === "VIP");
+      const eventDate = new Date(event.eventDate);
+      const formattedDate = eventDate.toISOString().split("T")[0];
 
       setFormData({
+        clientId: event.clientId,
         title: event.title,
         description: event.description,
         eventDate: formattedDate,
@@ -83,76 +107,110 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
         location: event.location,
         posterImageUrl: event.posterImageUrl,
         category: event.category,
-      })
+      });
     }
-  }, [event])
+  }, [event]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: Number(value) }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: Number(value) }));
+  };
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, hasVipTicket: checked }))
-  }
+    setFormData((prev) => ({ ...prev, hasVipTicket: checked }));
+  };
 
   const handleLocationChange = (location: Location) => {
-    setFormData((prev) => ({ ...prev, location }))
-  }
+    setFormData((prev) => ({ ...prev, location }));
+  };
 
   const handleTagsChange = (tags: string[]) => {
-    setFormData((prev) => ({ ...prev, tags }))
-  }
+    setFormData((prev) => ({ ...prev, tags }));
+  };
 
   const handleCategoryChange = (category: string) => {
-    setFormData((prev) => ({ ...prev, category }))
-  }
+    setFormData((prev) => ({ ...prev, category }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Create tickets array based on form data
-    const tickets: Ticket[] = [
-      {
-        type: "normal",
-        price: formData.normalTicketPrice,
-        availableSeats: formData.normalTicketCount,
-        sold: event.tickets.find((t) => t.type === "normal")?.sold || 0,
-      },
-    ]
-
-    // Add VIP ticket if enabled
-    if (formData.hasVipTicket) {
-      tickets.push({
-        type: "VIP",
-        price: formData.vipTicketPrice,
-        availableSeats: formData.vipTicketCount,
-        sold: event.tickets.find((t) => t.type === "VIP")?.sold || 0,
-      })
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setPosterImage(e.target.files[0]);
     }
+  };
 
-    // Create the updated event object
-    const updatedEvent: Event = {
-      ...event,
-      title: formData.title,
-      description: formData.description,
-      eventDate: new Date(formData.eventDate + "T" + formData.startTime).toISOString(),
-      startTime: formData.startTime,
-      endTime: formData.endTime,
-      tickets,
-      tags: formData.tags,
-      location: formData.location,
-      posterImageUrl: formData.posterImageUrl,
-      category: formData.category,
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Upload new poster image if selected
+      let posterImageUrl = formData.posterImageUrl;
+      if (posterImage) {
+        const uploadedImageUrl = await uploadImageToCloudinary(posterImage);
+        if (uploadedImageUrl) {
+          posterImageUrl = uploadedImageUrl;
+        }
+      }
+
+      // Create tickets array
+      const tickets: Ticket[] = [
+        {
+          type: "normal",
+          price: formData.normalTicketPrice,
+          availableSeats: formData.normalTicketCount,
+          sold: event.tickets.find((t) => t.type === "normal")?.sold || 0,
+        },
+      ];
+
+      // Add VIP ticket if enabled
+      if (formData.hasVipTicket) {
+        tickets.push({
+          type: "VIP",
+          price: formData.vipTicketPrice,
+          availableSeats: formData.vipTicketCount,
+          sold: event.tickets.find((t) => t.type === "VIP")?.sold || 0,
+        });
+      }
+
+      // Create the updated event object
+      const updatedEvent: Event = {
+        ...event,
+        title: formData.title,
+        description: formData.description,
+        eventDate: new Date(
+          formData.eventDate + "T" + formData.startTime
+        ).toISOString(),
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        tickets,
+        tags: formData.tags,
+        location: formData.location,
+        posterImageUrl,
+        category: formData.category,
+      };
+
+      console.log(updatedEvent,"Updated event dataaa")
+
+      // Call editEvent service
+      if (event.id) {
+        const editedEvent = await editEvent(event.id, updatedEvent);
+        onSubmit(editedEvent);
+        toast.success("Event updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+      toast.error("Failed to update event. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    onSubmit(updatedEvent)
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -169,7 +227,7 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
             </Avatar>
             <div>
               <p className="font-medium">Alexa Rowles</p>
-              <p className="text-sm text-muted-foreground">alexarowles@gmail.com</p>
+              <p className="text-sm text-muted-foreground">{email}</p>
             </div>
           </div>
 
@@ -268,7 +326,11 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
             </div>
 
             <div className="flex items-center space-x-2 mb-4">
-              <Checkbox id="hasVipTicket" checked={formData.hasVipTicket} onCheckedChange={handleCheckboxChange} />
+              <Checkbox
+                id="hasVipTicket"
+                checked={formData.hasVipTicket}
+                onCheckedChange={handleCheckboxChange}
+              />
               <Label htmlFor="hasVipTicket">VIP Ticket</Label>
             </div>
 
@@ -306,27 +368,47 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
 
             <div>
               <Label>Tags</Label>
-              <TagInput tags={formData.tags} onChange={handleTagsChange} placeholder="Add tags related to the event" />
+              <TagInput
+                tags={formData.tags}
+                onChange={handleTagsChange}
+                placeholder="Add tags related to the event"
+              />
             </div>
 
             <div>
               <Label>Location</Label>
-              <MapPicker location={formData.location} onLocationChange={handleLocationChange} />
+              <MapPicker
+                location={formData.location}
+                onLocationChange={handleLocationChange}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="posterImage">Upload title image</Label>
-                <div className="mt-2">
-                  <Button type="button" variant="outline" className="w-full">
-                    Upload
-                  </Button>
-                </div>
+                <label htmlFor="posterImage" className="cursor-pointer">
+                  <Button type="button">Upload Image</Button>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="cursor-pointer"
+                  />
+                </label>
+                {formData.posterImageUrl && (
+                  <img
+                    src={formData.posterImageUrl}
+                    alt="Current poster"
+                    className="mt-2 w-32 h-32 object-cover"
+                  />
+                )}
               </div>
 
               <div>
                 <Label htmlFor="category">Event category</Label>
-                <Select value={formData.category} onValueChange={handleCategoryChange}>
+                <Select
+                  value={formData.category}
+                  onValueChange={handleCategoryChange}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -346,12 +428,16 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-[#7848F4] hover:bg-[#6a3ee0]">
-              Update Event
+            <Button
+              type="submit"
+              className="bg-[#7848F4] hover:bg-[#6a3ee0]"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Updating Event..." : "Update Event"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

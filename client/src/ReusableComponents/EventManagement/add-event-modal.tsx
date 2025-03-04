@@ -56,7 +56,6 @@ export function AddEventModal({
 }: AddEventModalProps) {
   const userId = useSelector((state: any) => state?.user?.userInfo?.id);
   const email = useSelector((state: any) => state?.user?.userInfo?.email);
-  console.log(userId);
 
   const [formData, setFormData] = useState<EventFormData>({
     clientId: userId || "",

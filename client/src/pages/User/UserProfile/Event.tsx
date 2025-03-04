@@ -31,20 +31,20 @@ function Event() {
     getEvents();
   }, []);
 
-  console.log("events===>", events);
-
   const handleAddEvent = (newEvent: Event) => {
     setEvents([...events, { ...newEvent, clientId: Date.now().toString() }]);
     setIsAddModalOpen(false);
     toast.success("Your event has been successfully created.");
   };
+  console.log("Data of the Events",events)
 
   const handleEditEvent = (updatedEvent: Event) => {
     setEvents(
       events.map((event) =>
-        event.clientId === updatedEvent.clientId ? updatedEvent : event
+        event.id === updatedEvent.id ? updatedEvent : event
       )
     );
+    console.log("sdjlfghsdkjlfgh",updatedEvent.id)
     setIsEditModalOpen(false);
     setCurrentEvent(null);
     toast.success("Your event has been successfully updated.");

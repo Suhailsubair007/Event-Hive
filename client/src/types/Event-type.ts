@@ -12,6 +12,7 @@ export interface Location {
 }
 
 export interface Event {
+  id?: string;
   clientId: string;
   title: string;
   description: string;
@@ -27,6 +28,7 @@ export interface Event {
 }
 
 export interface EventFormData {
+  id?: string;
   clientId: string
   title: string
   description: string
