@@ -15,8 +15,8 @@ const eventRoutes = express.Router();
 
 eventRoutes.post(
   "/add",
-  authenticateToken,
-  authorizeRoles(["user"]),
+  // authenticateToken,
+  // authorizeRoles(["user"]),
   (req, res) => addEventController.addEvent(req, res)
 );
 eventRoutes.post(

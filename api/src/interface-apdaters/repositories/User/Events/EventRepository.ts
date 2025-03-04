@@ -46,12 +46,17 @@ export class EventRepository implements IEventRepository {
   }
 
   async listEvents(page: number, limit: number): Promise<Event[]> {
-    // const currentDate = new Date();
-    console.log("REached repository");
-    return EventModel.find({ isExpired: false })
+    return EventModel.find()
       .skip((page - 1) * limit)
       .limit(limit)
-      .exec();
+      .lean()
+      .exec()
+      .then((events) =>
+        events.map((event) => ({
+          ...event,
+          status: event.eventDate < new Date() ? "Expired" : "Upcoming",
+        }))
+      );
   }
 
 

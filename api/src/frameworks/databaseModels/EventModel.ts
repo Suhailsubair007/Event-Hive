@@ -22,14 +22,22 @@ const EventSchema = new Schema<Event & Document>(
     location: {
       latitude: { type: Number, required: true },
       longitude: { type: Number, required: true },
+      address: { type: String, required: true },
     },
     posterImageUrl: { type: String, required: true },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     attendees: [{ type: Schema.Types.ObjectId, ref: "User" }],
-    isExpired: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
+
+EventSchema.virtual("status").get(function () {
+  return this.eventDate < new Date() ? "Expired" : "Upcoming";
+});
+
+// Ensure virtuals are included in JSON output
+EventSchema.set("toJSON", { virtuals: true });
+EventSchema.set("toObject", { virtuals: true });
 
 // Create the Event model
 export const EventModel = model<Event & Document>("Event", EventSchema);

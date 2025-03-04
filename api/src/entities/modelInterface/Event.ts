@@ -20,9 +20,12 @@ export interface Event {
   location: {
     latitude: number;
     longitude: number;
+    address: number;
   };
   posterImageUrl: string;
   category: Types.ObjectId; // Reference to the Category collection
   attendees: Types.ObjectId[]; // Array of user IDs who booked tickets
-  isExpired: boolean; // To mark expired events
+  // isExpired: boolean; // To mark expired events
+  status?: "Upcoming" | "Expired"; 
+
 }
