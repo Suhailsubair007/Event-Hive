@@ -2,7 +2,9 @@ import type React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { updateUserPremiumStatus } from "../../services/User/userServices";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(
@@ -11,6 +13,32 @@ const stripePromise = loadStripe(
 
 const GrandHostPromo: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state: any) => state?.user?.userInfo);
+  const userId = useSelector((state: any) => state?.user?.userInfo?.id);
+  
+  // Check for payment success from URL parameters
+  useEffect(() => {
+    // This checks if we're returning from Stripe with a payment_intent in the URL
+    const query = new URLSearchParams(window.location.search);
+    const paymentSuccess = query.get("payment_success");
+    
+    if (paymentSuccess === "true") {
+      // Payment was successful, update user status
+      handleSuccessfulPayment();
+      
+      // Remove the query parameter to prevent repeated calls
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  const handleSuccessfulPayment = async () => {
+    try {
+      await updateUserPremiumStatus({ id: userId });
+      console.log("Premium status updated successfully");
+    } catch (error) {
+      console.error("Error updating premium status:", error);
+    }
+  };
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -20,7 +48,7 @@ const GrandHostPromo: React.FC = () => {
     const { error } = await stripe.redirectToCheckout({
       lineItems: [{ price: "price_1QyabTQEbmBrayFWg4Pr7Yw7", quantity: 1 }],
       mode: "payment",
-      successUrl: `${window.location.origin}/success`,
+      successUrl: `${window.location.origin}/success?payment_success=true`,
       cancelUrl: `${window.location.origin}/cancel`,
     });
 
@@ -30,6 +58,8 @@ const GrandHostPromo: React.FC = () => {
 
     setLoading(false);
   };
+
+  // ... rest of your component code (variants and return JSX) remains the same
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -67,6 +97,7 @@ const GrandHostPromo: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
+        {/* Component content remains the same */}
         <div className="flex flex-col lg:flex-row">
           {/* Content Section */}
           <motion.div

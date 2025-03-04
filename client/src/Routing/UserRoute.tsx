@@ -10,6 +10,7 @@ import UserPrivate from "./protected/User/UserPrivate";
 import ProfilePage from "@/pages/User/UserProfile/ProfilePage";
 import ProfileUpdate from "@/ReusableComponents/UserProfileComponets/ProfileUpdate";
 import GrandHostPromo from "@/ReusableComponents/UserProfileComponets/GrandHost";
+import Event from "@/pages/User/UserProfile/Event";
 const UserRoute: React.FC = () => {
   return (
     <>
@@ -59,6 +60,7 @@ const UserRoute: React.FC = () => {
         <Route path="/profile" element={<ProfilePage />}>
           <Route path="update" element={<ProfileUpdate />} />
           <Route path="premium" element={<GrandHostPromo />} />
+          <Route path="event" element={<Event />} />
         </Route>
       </Routes>
     </>
