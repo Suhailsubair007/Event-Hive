@@ -12,21 +12,22 @@ export interface Location {
 }
 
 export interface Event {
-  id: string;
+  clientId: string;
   title: string;
   description: string;
   eventDate: string;
   startTime: string;
   endTime: string;
-  tickets: Ticket[]; // Ensure Ticket interface supports both "normal" and "VIP"
+  tickets: Ticket[]; 
   tags: string[];
   location: Location;
   posterImageUrl: string;
   category: string;
-  status: "upcoming" | "completed";
+  status: "upcoming" | "expired";
 }
 
 export interface EventFormData {
+  clientId: string
   title: string
   description: string
   eventDate: string

@@ -17,7 +17,7 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
   const [activeTab, setActiveTab] = useState("upcoming")
 
   const upcomingEvents = events.filter((event) => event.status === "upcoming")
-  const completedEvents = events.filter((event) => event.status === "completed")
+  const completedEvents = events.filter((event) => event.status === "expired")
 
   const container = {
     hidden: { opacity: 0 },
@@ -48,7 +48,7 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
           <TabsTrigger value="upcoming" className={activeTab === "upcoming" ? "border-b-2 border-[#7848F4]" : ""}>
             Upcoming
           </TabsTrigger>
-          <TabsTrigger value="completed" className={activeTab === "completed" ? "border-b-2 border-[#7848F4]" : ""}>
+          <TabsTrigger value="Expired" className={activeTab === "expired" ? "border-b-2 border-[#7848F4]" : ""}>
             Completed
           </TabsTrigger>
         </TabsList>
@@ -71,7 +71,7 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
           </motion.div>
         </TabsContent>
 
-        <TabsContent value="completed">
+        <TabsContent value="Expired">
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             variants={container}

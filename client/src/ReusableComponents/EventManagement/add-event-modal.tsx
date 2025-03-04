@@ -1,14 +1,28 @@
 import type React from "react";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { Event, EventFormData, Location, Ticket } from "../../types/Event-type";
+import { createEvent } from "../../services/User/eventService";
+import { toast } from "sonner";
+import { uploadImageToCloudinary } from "../../utils/imageUpload";
+import type {
+  Event,
+  EventFormData,
+  Location,
+  Ticket,
+} from "../../types/Event-type";
 import { MapPicker } from "./map-picker";
 import { TagInput } from "./tagInput";
+import { useSelector } from "react-redux";
 import {
   Select,
   SelectContent,
@@ -40,7 +54,12 @@ export function AddEventModal({
   onClose,
   onSubmit,
 }: AddEventModalProps) {
+  const userId = useSelector((state: any) => state?.user?.userInfo?.id);
+  const email = useSelector((state: any) => state?.user?.userInfo?.email);
+  console.log(userId);
+
   const [formData, setFormData] = useState<EventFormData>({
+    clientId: userId || "",
     title: "",
     description: "",
     eventDate: "",
@@ -57,9 +76,12 @@ export function AddEventModal({
       longitude: 77.5946,
       address: "",
     },
-    posterImageUrl: "https://example.com/poster.jpg",
+    posterImageUrl: "",
     category: "Music events",
   });
+
+  const [posterImage, setPosterImage] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -89,50 +111,78 @@ export function AddEventModal({
     setFormData((prev) => ({ ...prev, category }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Create tickets array based on form data
-    const tickets: Ticket[] = [
-      {
-        type: "normal",
-        price: formData.normalTicketPrice,
-        availableSeats: formData.normalTicketCount,
-        sold: 0,
-      },
-    ];
-
-    // Add VIP ticket if enabled
-    if (formData.hasVipTicket) {
-      tickets.push({
-        type: "VIP",
-        price: formData.vipTicketPrice,
-        availableSeats: formData.vipTicketCount,
-        sold: 0,
-      });
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setPosterImage(e.target.files[0]);
     }
-
-    // Create the event object
-    const newEvent: Event = {
-      id: Date.now().toString(),
-      title: formData.title,
-      description: formData.description,
-      eventDate: new Date(
-        formData.eventDate + "T" + formData.startTime
-      ).toISOString(),
-      startTime: formData.startTime,
-      endTime: formData.endTime,
-      tickets,
-      tags: formData.tags,
-      location: formData.location,
-      posterImageUrl: formData.posterImageUrl,
-      category: formData.category,
-      status: "upcoming",
-    };
-
-    onSubmit(newEvent);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Upload poster image if selected
+      let posterImageUrl = formData.posterImageUrl;
+      if (posterImage) {
+        const uploadedImageUrl = await uploadImageToCloudinary(posterImage);
+        if (uploadedImageUrl) {
+          posterImageUrl = uploadedImageUrl;
+        }
+      }
+
+      // Create tickets array
+      const tickets: Ticket[] = [
+        {
+          type: "normal",
+          price: formData.normalTicketPrice,
+          availableSeats: formData.normalTicketCount,
+          sold: 0,
+        },
+      ];
+
+      // Add VIP ticket if enabled
+      if (formData.hasVipTicket) {
+        tickets.push({
+          type: "VIP",
+          price: formData.vipTicketPrice,
+          availableSeats: formData.vipTicketCount,
+          sold: 0,
+        });
+      }
+
+      // Create the event object
+      const newEvent: Event = {
+        clientId: userId,
+        title: formData.title,
+        description: formData.description,
+        eventDate: new Date(
+          formData.eventDate + "T" + formData.startTime
+        ).toISOString(),
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        tickets,
+        tags: formData.tags,
+        location: formData.location,
+        posterImageUrl,
+        category: formData.category,
+        status: "upcoming",
+      };
+
+      // Create event through API
+      const createdEvent = await createEvent(newEvent);
+
+      // Call onSubmit with the created event
+      onSubmit(createdEvent);
+
+      toast.success("Event created successfully!");
+    } catch (error) {
+      console.error("Error creating event:", error);
+      toast.error("Failed to create event. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -148,9 +198,7 @@ export function AddEventModal({
             </Avatar>
             <div>
               <p className="font-medium">Alexa Rowles</p>
-              <p className="text-sm text-muted-foreground">
-                alexarowles@gmail.com
-              </p>
+              <p className="text-sm text-muted-foreground">{email}</p>
             </div>
           </div>
 
@@ -308,12 +356,15 @@ export function AddEventModal({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="posterImage">Upload title image</Label>
-                <div className="mt-2">
-                  <Button type="button" variant="outline" className="w-full">
-                    Upload
-                  </Button>
-                </div>
+                <label htmlFor="posterImage" className="cursor-pointer">
+                  <Button type="button">Upload Image</Button>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="cursor-pointer"
+                  />
+                </label>
               </div>
 
               <div>
@@ -341,8 +392,12 @@ export function AddEventModal({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-[#7848F4] hover:bg-[#6a3ee0]">
-              Create Event
+            <Button
+              type="submit"
+              className="bg-[#7848F4] hover:bg-[#6a3ee0]"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Creating Event..." : "Create Event"}
             </Button>
           </div>
         </form>
