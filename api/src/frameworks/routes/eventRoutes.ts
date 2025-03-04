@@ -21,8 +21,8 @@ eventRoutes.post(
 );
 eventRoutes.post(
   "/edit/:eventId",
-  authenticateToken,
-  authorizeRoles(["user"]),
+  // authenticateToken,
+  // authorizeRoles(["user"]),
   (req, res) => editEventController.editEvent(req, res)
 );
 

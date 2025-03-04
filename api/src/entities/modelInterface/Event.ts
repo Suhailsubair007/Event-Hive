@@ -23,9 +23,7 @@ export interface Event {
     address: number;
   };
   posterImageUrl: string;
-  category: Types.ObjectId; // Reference to the Category collection
-  attendees: Types.ObjectId[]; // Array of user IDs who booked tickets
-  // isExpired: boolean; // To mark expired events
+  category: string; 
+  attendees: Types.ObjectId[];
   status?: "Upcoming" | "Expired"; 
-
 }

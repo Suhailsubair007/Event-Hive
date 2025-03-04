@@ -9,6 +9,8 @@ export class AddEventController {
     async addEvent(req: Request, res: Response): Promise<void> {
       try {
         const eventData: Event = req.body;
+        console.log("Event adding......")
+        console.log("Data of the Event-->?", eventData)
   
         const event = await this.addEventUseCase.execute(eventData); 
         res.status(201).json({ success: true, event });

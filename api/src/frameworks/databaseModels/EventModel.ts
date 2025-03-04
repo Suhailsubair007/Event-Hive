@@ -25,7 +25,7 @@ const EventSchema = new Schema<Event & Document>(
       address: { type: String, required: true },
     },
     posterImageUrl: { type: String, required: true },
-    category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    category: { type:String, required: true },
     attendees: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
