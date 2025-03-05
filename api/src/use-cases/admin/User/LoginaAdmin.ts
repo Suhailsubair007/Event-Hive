@@ -10,7 +10,7 @@ export class AdminLogin {
   async execute(
     email: string,
     password: string
-  ): Promise<{ name: string; email: string; accessToken: string; refreshToken: string }>{
+  ): Promise<{  name: string; email: string; accessToken: string; refreshToken: string }>{
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new CustomError("Invalid email or password", 401);
@@ -38,6 +38,7 @@ export class AdminLogin {
     });
 
     return {
+      // id: user._id,
       name: user.name,
       email: user.email,
       accessToken,

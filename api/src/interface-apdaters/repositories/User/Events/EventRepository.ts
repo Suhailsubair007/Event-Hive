@@ -45,8 +45,9 @@ export class EventRepository implements IEventRepository {
     );
   }
 
-  async listEvents(page: number, limit: number): Promise<Event[]> {
-    return EventModel.find()
+  async listEvents(page: number, limit: number, clientId?: string): Promise<Event[]> {
+    const query = clientId ? { clientId } : {};
+    return EventModel.find(query)
       .skip((page - 1) * limit)
       .limit(limit)
       .lean()

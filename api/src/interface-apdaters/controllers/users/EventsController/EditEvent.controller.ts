@@ -9,6 +9,8 @@ export class EditEventController {
     try {
       const eventId = req.params.eventId;
       const eventData = req.body;
+      console.log(eventId, eventData);
+      console.log("reached here");
 
       const event = await this.editEventUsecase.execute(eventId, eventData);
       res.status(200).json({ success: true, event });

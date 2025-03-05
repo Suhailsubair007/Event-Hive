@@ -5,5 +5,5 @@ export interface ICategoryRepository {
   updateCategory(id: string, category: Partial<ICategory>): Promise<ICategory | null>;
   listCategory(id: string, isListed: boolean): Promise<ICategory | null>;
   findByName(name: string): Promise<ICategory | null>;
-  findAllCategories():Promise<ICategory[]>
+  findAllCategories(page: number, limit: number): Promise<ICategory[]>;
 }

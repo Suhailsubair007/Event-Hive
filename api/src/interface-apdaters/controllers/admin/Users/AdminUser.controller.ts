@@ -10,12 +10,19 @@ export class AdminUserController {
 
   async getUsers(req: Request, res: Response): Promise<void> {
     try {
-      const { isPremiumUser } = req.query;
+      const { isPremiumUser, page, limit } = req.query;
 
-      // Convert query parameter to boolean
+      // Convert query parameters to appropriate types
       const isPremium = isPremiumUser === "true";
+      const pageNumber = parseInt(page as string) || 1; 
+      const limitNumber = parseInt(limit as string) || 10; 
 
-      const users = await this.getUsersByPremiumStatus.execute(isPremium);
+      const users = await this.getUsersByPremiumStatus.execute(
+        isPremium,
+        pageNumber,
+        limitNumber
+      );
+
       res.status(200).json({ success: true, users });
     } catch (error: any) {
       res.status(error.statusCode || 500).json({
@@ -31,6 +38,7 @@ export class AdminUserController {
       const { accessToken, refreshToken }  = await this.loginAdmin.execute(email, password);
 
       res.status(200).json({
+        email,
         success: true,
         message: "Admin logged in successfully",
         accessToken,

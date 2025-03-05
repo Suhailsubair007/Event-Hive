@@ -5,7 +5,11 @@ import { Event } from "../../../entities/modelInterface/Event";
 export class ListEvents {
   constructor(private eventRepository: IEventRepository) {}
 
-  async execute(page: number, limit: number): Promise<Event[]> {
-    return this.eventRepository.listEvents(page, limit);
+  async execute(
+    page: number,
+    limit: number,
+    clientId?: string
+  ): Promise<Event[]> {
+    return this.eventRepository.listEvents(page, limit, clientId);
   }
 }

@@ -21,6 +21,10 @@ import { GoogleAuthRepository } from "../../../interface-apdaters/repositories/U
 import { UpdateUserRepository } from "../../../interface-apdaters/repositories/User/Auth/updatePremiumUser.repository";
 import { UpdateUserPremiumStatus } from "../../../use-cases/user/Auth/UpdateUserPremiumStatus";
 import { UpdateUserPremiumStatusController } from "../../../interface-apdaters/controllers/users/AuthController/updatePremiumStatusController";
+import { UpdateProfile } from "../../../use-cases/user/User/updateProfile";
+import { UpdateProfileController } from "../../../interface-apdaters/controllers/users/updateProfileController";
+import { FetchUserDetails } from "../../../use-cases/user/User/getProfileDetails";
+import { FetchUserDetailsController } from "../../../interface-apdaters/controllers/users/FetchUserDetailsController";
 
 // Instantiate repositories
 const userRepository = new UserRepository();
@@ -70,6 +74,12 @@ const updateUserPremiumStatusController = new UpdateUserPremiumStatusController(
   updateUserPremiumStatusUseCase
 );
 
+const updateProfile = new UpdateProfile(userRepository);
+const updateProfileController = new UpdateProfileController(updateProfile);
+
+const fetchUserDetails = new FetchUserDetails(userRepository);
+const fetchUserDetailsController = new FetchUserDetailsController(fetchUserDetails);
+
 const refreshTokenController = new RefreshTokenController();
 export {
   userController,
@@ -80,4 +90,6 @@ export {
   googleController,
   refreshTokenController,
   updateUserPremiumStatusController,
+  updateProfileController,
+  fetchUserDetailsController
 };

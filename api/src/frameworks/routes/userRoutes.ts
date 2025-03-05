@@ -7,7 +7,9 @@ import {
   userPreferenceController,
   googleController,
   refreshTokenController,
-  updateUserPremiumStatusController
+  updateUserPremiumStatusController,
+  updateProfileController,
+  fetchUserDetailsController
 } from "../di/User/Auth.dependencyContainer";
 
 const userRoutes = express.Router();
@@ -35,6 +37,14 @@ userRoutes.post("/refresh", (req, res) =>
 
 userRoutes.patch("/users/:userId/premium", (req, res) => 
   updateUserPremiumStatusController.updatePremiumStatus(req, res)
+);
+
+userRoutes.patch("/users/:userId/profile", (req, res) =>
+  updateProfileController.updateProfile(req, res)
+);
+
+userRoutes.get("/users/:email", (req, res) =>
+  fetchUserDetailsController.fetchUserDetails(req, res)
 );
 
 export default userRoutes;

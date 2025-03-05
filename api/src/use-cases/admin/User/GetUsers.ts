@@ -4,7 +4,11 @@ import { Iuser } from "../../../entities/modelInterface/User";
 export class GetUsersByPremiumStatus {
   constructor(private userRepository: IAdminUserRepository) {}
 
-  async execute(isPremiumUser: boolean): Promise<Iuser[]> {
-    return this.userRepository.getUsersByPremiumStatus(isPremiumUser);
+  async execute(
+    isPremiumUser: boolean,
+    page: number,
+    limit: number
+  ): Promise<Iuser[]> {
+    return this.userRepository.getUsersByPremiumStatus(isPremiumUser, page, limit);
   }
 }

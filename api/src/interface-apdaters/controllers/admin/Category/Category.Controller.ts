@@ -74,8 +74,12 @@ export class CategoryContoller {
 
   async getAll(req: Request, res: Response): Promise<void> {
     try {
-      console.log("IN get category,,,")
-      const categories = await this.getAllCategories.execute();
+      const { page, limit } = req.query;
+
+      const pageNumber = parseInt(page as string) || 1; 
+      const limitNumber = parseInt(limit as string) || 10;
+
+      const categories = await this.getAllCategories.execute(pageNumber, limitNumber);
       res.status(200).json({ success: true, categories });
     } catch (error: any) {
       res.status(error.statusCode || 500).json({
