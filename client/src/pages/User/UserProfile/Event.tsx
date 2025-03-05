@@ -6,6 +6,8 @@ import type { Event } from "../../../types/Event-type";
 import { fetchEvents } from "../../../services/User/eventService";
 import { LoadingEventsAnimation } from "../../../ReusableComponents/LoadingAnimations/LoadingEventsAnimation";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
+
 
 function Event() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -14,11 +16,12 @@ function Event() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const clientId = useSelector((state: any) => state?.user?.userInfo?.id);
 
   useEffect(() => {
     const getEvents = async () => {
       try {
-        const data = await fetchEvents();
+        const data = await fetchEvents(clientId);
         setEvents(data);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -36,7 +39,7 @@ function Event() {
     setIsAddModalOpen(false);
     toast.success("Your event has been successfully created.");
   };
-  console.log("Data of the Events",events)
+  console.log("Data of the Events", events);
 
   const handleEditEvent = (updatedEvent: Event) => {
     setEvents(
@@ -44,7 +47,7 @@ function Event() {
         event.id === updatedEvent.id ? updatedEvent : event
       )
     );
-    console.log("sdjlfghsdkjlfgh",updatedEvent.id)
+    console.log("sdjlfghsdkjlfgh", updatedEvent.id);
     setIsEditModalOpen(false);
     setCurrentEvent(null);
     toast.success("Your event has been successfully updated.");

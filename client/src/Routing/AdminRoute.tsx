@@ -5,14 +5,30 @@ import Dashboard from "@/ReusableComponents/AdminDashboardComponents/Dashboard";
 import AdminLayout from "@/pages/Admin/Main/AdminLayout";
 import UserManagement from "@/ReusableComponents/AdminDashboardComponents/Users";
 import CategoryManagement from "@/ReusableComponents/AdminDashboardComponents/CategoryManagement";
+import AdminLoginProtect from "./protected/Admin/PrtectAdminLogin";
+import AdminPrivate from "./protected/Admin/AdminPrivate";
 
 const AdminRoute: React.FC = () => {
   return (
     <>
       <Routes>
-        <Route path="/login" element={<AdminLogin />} />
+        <Route
+          path="/login"
+          element={
+            <AdminLoginProtect>
+              <AdminLogin />
+            </AdminLoginProtect>
+          }
+        />
 
-        <Route path="/*" element={<AdminLayout />}>
+        <Route
+          path="/*"
+          element={
+            <AdminPrivate>
+              <AdminLayout />
+            </AdminPrivate>
+          }
+        >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<UserManagement />} />
           <Route path="category" element={<CategoryManagement />} />

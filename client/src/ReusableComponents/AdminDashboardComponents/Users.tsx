@@ -1,12 +1,27 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Search, Users, Crown } from "lucide-react";
-import { getUsers } from "../../services/Admin/adminService"; 
+import { getUsers } from "../../services/Admin/adminService";
 
 interface User {
   _id: string;
@@ -20,16 +35,24 @@ interface User {
 export default function UserManagement() {
   const [search, setSearch] = React.useState("");
   const [activeTab, setActiveTab] = React.useState("all");
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const limit = 10;
 
   const isPremiumUser = activeTab === "premium";
 
-
-  const { data: users = [], isLoading, isError, error } = useQuery({
-    queryKey: ["users", isPremiumUser],
-    queryFn: () => getUsers(isPremiumUser),
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["users", isPremiumUser, currentPage],
+    queryFn: () => getUsers(isPremiumUser, currentPage, limit),
     refetchOnWindowFocus: false,
   });
 
+  const users = data?.users || [];
+  const total = data?.total || 0;
+
+  React.useEffect(() => {
+    setTotalPages(Math.ceil(total / limit));
+  }, [total]);
 
   const filteredUsers = React.useMemo(() => {
     return users.filter((user: User) => {
@@ -39,6 +62,12 @@ export default function UserManagement() {
       );
     });
   }, [users, search]);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div className="w-full px-4 py-6">
@@ -78,8 +107,12 @@ export default function UserManagement() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
-                    <TableHead className="hidden md:table-cell">Email</TableHead>
-                    <TableHead className="hidden lg:table-cell">Phone</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Email
+                    </TableHead>
+                    <TableHead className="hidden lg:table-cell">
+                      Phone
+                    </TableHead>
                     <TableHead>Profile</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
@@ -93,8 +126,13 @@ export default function UserManagement() {
                     </TableRow>
                   ) : isError ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-red-500">
-                        {error instanceof Error ? error.message : 'An error occurred'}
+                      <TableCell
+                        colSpan={6}
+                        className="text-center text-red-500"
+                      >
+                        {error instanceof Error
+                          ? error.message
+                          : "An error occurred"}
                       </TableCell>
                     </TableRow>
                   ) : filteredUsers.length === 0 ? (
@@ -106,20 +144,29 @@ export default function UserManagement() {
                   ) : (
                     filteredUsers.map((user: User) => (
                       <TableRow key={user?._id} className="hover:bg-muted/50">
-                    
                         <TableCell>{user.name}</TableCell>
-                        <TableCell className="hidden md:table-cell">{user.email}</TableCell>
-                        <TableCell className="hidden lg:table-cell">{user.phone}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {user.email}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          {user.phone}
+                        </TableCell>
                         <TableCell>
                           <Avatar>
                             <AvatarImage src={user.avatar} alt={user.name} />
-                            <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>
+                              {user.name.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
                           </Avatar>
                         </TableCell>
                         <TableCell>
                           <Badge
-                            variant={user.isActive  ? "default" : "destructive"}
-                            className={user.isActive  ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-red-100 text-red-800 hover:bg-red-100"}
+                            variant={user.isActive ? "default" : "destructive"}
+                            className={
+                              user.isActive
+                                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
+                            }
                           >
                             {user.isActive ? "Active" : "Blocked"}
                           </Badge>
@@ -130,6 +177,41 @@ export default function UserManagement() {
                 </TableBody>
               </Table>
             </div>
+            {/* Pagination for All Users */}
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className={
+                      currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(page)}
+                        isActive={currentPage === page}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </TabsContent>
 
           <TabsContent value="premium">
@@ -137,10 +219,13 @@ export default function UserManagement() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                   
                     <TableHead>Name</TableHead>
-                    <TableHead className="hidden md:table-cell">Email</TableHead>
-                    <TableHead className="hidden lg:table-cell">Phone</TableHead>
+                    <TableHead className="hidden md:table-cell">
+                      Email
+                    </TableHead>
+                    <TableHead className="hidden lg:table-cell">
+                      Phone
+                    </TableHead>
                     <TableHead>Profile</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
@@ -154,8 +239,13 @@ export default function UserManagement() {
                     </TableRow>
                   ) : isError ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-red-500">
-                        {error instanceof Error ? error.message : 'An error occurred'}
+                      <TableCell
+                        colSpan={6}
+                        className="text-center text-red-500"
+                      >
+                        {error instanceof Error
+                          ? error.message
+                          : "An error occurred"}
                       </TableCell>
                     </TableRow>
                   ) : filteredUsers.length === 0 ? (
@@ -168,18 +258,28 @@ export default function UserManagement() {
                     filteredUsers.map((user: User) => (
                       <TableRow key={user._id} className="hover:bg-muted/50">
                         <TableCell>{user.name}</TableCell>
-                        <TableCell className="hidden md:table-cell">{user.email}</TableCell>
-                        <TableCell className="hidden lg:table-cell">{user.phone}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {user.email}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          {user.phone}
+                        </TableCell>
                         <TableCell>
                           <Avatar>
                             <AvatarImage src={user.avatar} alt={user.name} />
-                            <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>
+                              {user.name.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
                           </Avatar>
                         </TableCell>
                         <TableCell>
                           <Badge
                             variant={user.isActive ? "default" : "destructive"}
-                            className={user.isActive ? "bg-green-100 text-green-800 hover:bg-green-100" : "bg-red-100 text-red-800 hover:bg-red-100"}
+                            className={
+                              user.isActive
+                                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
+                            }
                           >
                             {user.isActive ? "Active" : "Blocked"}
                           </Badge>
@@ -190,6 +290,41 @@ export default function UserManagement() {
                 </TableBody>
               </Table>
             </div>
+            {/* Pagination for Premium Users */}
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className={
+                      currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                    }
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(page)}
+                        isActive={currentPage === page}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </TabsContent>
         </Tabs>
       </div>

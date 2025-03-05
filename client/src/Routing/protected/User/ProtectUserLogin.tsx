@@ -10,7 +10,6 @@ interface ProtectUserLoginProps {
 const ProtectUserLogin: React.FC<ProtectUserLoginProps> = ({ children }) => {
   const userData = useSelector((state: RootState) => state.user.userInfo);
   
-  console.log("ProtectUserLogin -> userData", userData);
 
   if (userData === null) {
     return <>{children}</>;

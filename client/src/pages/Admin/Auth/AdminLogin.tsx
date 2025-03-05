@@ -8,12 +8,18 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import axiosInstance from "@/config/axiosInstence";
-// import { useDispatch } from "react-redux";
-// import { setUserDetails } from "../../../redux/userSlice";
+import { useDispatch } from "react-redux";
+import { setAdminDetails } from "../../../redux/adminSlice";
 
 interface AdminLoginData {
   email: string;
   password: string;
+}
+interface AdminLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  email: string;
+  success: boolean;
 }
 
 const loginAdmin = async (data: AdminLoginData) => {
@@ -25,14 +31,20 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const mutation = useMutation({
     mutationFn: loginAdmin,
-    onSuccess: (data) => {
+    onSuccess: (data:AdminLoginResponse) => {
+      const adminData = {
+        email: data.email,
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      };
       if (data.success) {
+        dispatch(setAdminDetails(adminData));
         toast.success("Login Successful");
-        // dispatch(setAdminDetails(data.result));
+        console.log("Data after admin login-->", data);
         navigate("/admin/dashboard");
       } else {
         toast.error("Invalid credentials");

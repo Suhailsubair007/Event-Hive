@@ -1,13 +1,14 @@
 import axiosInstance from "@/config/axiosInstence";
 import { Event } from "../../types/Event-type";
 
-export const fetchEvents = async (): Promise<Event[]> => {
-  const response = await axiosInstance.get("/event/events");
+export const fetchEvents = async (clientId?: string): Promise<Event[]> => {
+  const response = await axiosInstance.get("/event/events", {
+    params: { clientId }, // Pass clientId as a query parameter
+  });
   console.log("Events data-->", response.data);
 
-
   return response.data.events.map((event: any) => ({
-    id: event._id, 
+    id: event._id,
     title: event.title,
     description: event.description,
     eventDate: new Date(event.eventDate),
@@ -18,11 +19,9 @@ export const fetchEvents = async (): Promise<Event[]> => {
     location: event.location,
     posterImageUrl: event.posterImageUrl,
     category: event.category,
-    status: event.status.toLowerCase() as "upcoming" | "completed", 
+    status: event.status.toLowerCase() as "upcoming" | "completed",
   }));
 };
-
-
 export const createEvent = async (eventData: Event): Promise<Event> => {
   try {
     const response = await axiosInstance.post("/event/add", eventData);
@@ -33,11 +32,15 @@ export const createEvent = async (eventData: Event): Promise<Event> => {
   }
 };
 
-export const editEvent = async (eventId: string, eventData: Partial<Event>): Promise<Event> => {
+export const editEvent = async (
+  eventId: string,
+  eventData: Partial<Event>
+): Promise<Event> => {
   try {
-    console.log("Event data in edit event",eventData)
-    const response = await axiosInstance.post(`/event/edit/${eventId}`, eventData);
-    console.log("Inside the edit event",response.data.event)
+    const response = await axiosInstance.post(
+      `/event/edit/${eventId}`,
+      eventData
+    );
     return response.data.event;
   } catch (error) {
     console.error("Error editing event:", error);

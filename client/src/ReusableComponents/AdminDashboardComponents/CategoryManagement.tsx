@@ -19,12 +19,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Pencil, Upload } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Plus, Pencil } from "lucide-react";
 import { uploadImageToCloudinary } from "@/utils/imageUpload";
+import { AddCategoryAnimation } from "../LoadingAnimations/AddingCategoryAnimation";
 import {
   type CategoryData,
   categoryService,
 } from "../../services/Admin/categoryService";
+import { validateCategoryForm } from "../../utils/validations/categoryValidation"; // Import the validation function
 
 export default function CategoryManagement() {
   const [categories, setCategories] = React.useState<CategoryData[]>([]);
@@ -32,6 +42,12 @@ export default function CategoryManagement() {
   const [editingCategory, setEditingCategory] =
     React.useState<CategoryData | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const [formErrors, setFormErrors] = React.useState<Record<string, string>>(
+    {}
+  );
+  const limit = 5;
 
   const [formData, setFormData] = React.useState<CategoryData>({
     name: "",
@@ -40,33 +56,45 @@ export default function CategoryManagement() {
   });
 
   React.useEffect(() => {
+    console.log("Fetching categories for page:", currentPage);
     fetchCategories();
-  }, []);
+  }, [currentPage]);
 
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getAllCategories();
+      const response = await categoryService.getAllCategories(
+        currentPage,
+        limit
+      );
+      console.log("API Response:", response); // Add this log
       setCategories(response.categories);
+      setTotalPages(Math.ceil(response.total / limit));
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const errors = validateCategoryForm(formData);
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+
     setIsLoading(true);
     try {
       if (editingCategory) {
-        // Use editCategory when editing
         await categoryService.editCategory(editingCategory._id!, formData);
       } else {
-        // Use addCategory when adding
         await categoryService.addCategory(formData);
       }
       fetchCategories();
       setIsAddModalOpen(false);
       setEditingCategory(null);
       setFormData({ name: "", description: "", imageUrl: "" });
+      setFormErrors({});
     } catch (error) {
       console.error("Error saving category:", error);
     }
@@ -89,6 +117,7 @@ export default function CategoryManagement() {
       description: category.description,
       imageUrl: category.imageUrl,
     });
+    setFormErrors({});
     setIsAddModalOpen(true);
   };
 
@@ -108,6 +137,15 @@ export default function CategoryManagement() {
     setIsLoading(false);
   };
 
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+  if (isLoading) {
+    return <AddCategoryAnimation />;
+  }
+
   return (
     <div className="w-full px-4 py-6">
       <div className="mx-auto max-w-6xl space-y-6">
@@ -122,6 +160,7 @@ export default function CategoryManagement() {
                 onClick={() => {
                   setEditingCategory(null);
                   setFormData({ name: "", description: "", imageUrl: "" });
+                  setFormErrors({});
                 }}
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -146,6 +185,9 @@ export default function CategoryManagement() {
                     placeholder="Enter category name"
                     required
                   />
+                  {formErrors.name && (
+                    <p className="text-sm text-red-500">{formErrors.name}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
@@ -158,6 +200,11 @@ export default function CategoryManagement() {
                     placeholder="Enter category description"
                     required
                   />
+                  {formErrors.description && (
+                    <p className="text-sm text-red-500">
+                      {formErrors.description}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="image">Category Image</Label>
@@ -243,6 +290,51 @@ export default function CategoryManagement() {
             </TableBody>
           </Table>
         </div>
+
+        <Pagination className="mt-4">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log("Previous clicked");
+                  handlePageChange(currentPage - 1);
+                }}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
+              />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={(e) => {
+                    e.preventDefault();
+                    console.log("Page clicked:", page);
+                    handlePageChange(page);
+                  }}
+                  isActive={currentPage === page}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                onClick={(e) => {
+                  e.preventDefault();
+                  console.log("Next clicked");
+                  handlePageChange(currentPage + 1);
+                }}
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );

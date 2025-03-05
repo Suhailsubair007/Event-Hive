@@ -3,18 +3,18 @@ import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { RootState } from "@/redux/Store";
 
-interface AdminPrivateProps {
+interface AdminLoginProtectProps {
   children: ReactNode;
 }
 
-const AdminPrivate: React.FC<AdminPrivateProps> = ({ children }) => {
+const AdminLoginProtect: React.FC<AdminLoginProtectProps> = ({ children }) => {
   const adminData = useSelector((state: RootState) => state.admin.adminInfo);
 
-  if (!adminData) {
-    return <Navigate to="/admin/login" />;
+  if (adminData) {
+    return <Navigate to="/admin/dashboard" />;
   }
 
   return <>{children}</>;
 };
 
-export default AdminPrivate;
+export default AdminLoginProtect;

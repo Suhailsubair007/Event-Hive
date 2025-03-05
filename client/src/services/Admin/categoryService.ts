@@ -1,4 +1,4 @@
-import axiosInstance from "@/config/axiosInstence";
+import adminAxiosInstance from "@/config/adminAxiosInstance";
 
 export interface CategoryData {
   _id?: string;
@@ -9,18 +9,20 @@ export interface CategoryData {
 }
 
 export const categoryService = {
-  getAllCategories: async () => {
-    const response = await axiosInstance.get(`/admin/categories`);
+  getAllCategories: async (page: number = 1, limit: number = 5) => {
+    const response = await adminAxiosInstance.get(
+      `/admin/categories?page=${page}&limit=${limit}`
+    );
     return response.data;
   },
 
   addCategory: async (categoryData: CategoryData) => {
-    const response = await axiosInstance.post('/admin/categories', categoryData);
+    const response = await adminAxiosInstance.post('/admin/categories', categoryData);
     return response.data;
   },
 
   editCategory: async (id: string, categoryData: CategoryData) => {
-    const response = await axiosInstance.post(
+    const response = await adminAxiosInstance.post(
       `/admin/categories/${id}`,
       categoryData
     );
@@ -28,7 +30,7 @@ export const categoryService = {
   },
 
   toggleCategoryStatus: async (id: string, isListed: boolean) => {
-    const response = await axiosInstance.patch(`/admin/categories/${id}/list`, {
+    const response = await adminAxiosInstance.patch(`/admin/categories/${id}/list`, {
       isListed,
     });
     return response.data;

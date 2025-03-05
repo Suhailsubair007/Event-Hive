@@ -29,7 +29,6 @@ export default function Login() {
   const mutation = useMutation({
     mutationFn: LoginUser,
     onSuccess: (data) => {
-      console.log("datata after normal login", data);
       const userData = {
         id: data.user.id,
         email: data.user.email,
