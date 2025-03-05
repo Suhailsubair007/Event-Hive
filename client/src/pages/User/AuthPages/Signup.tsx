@@ -69,6 +69,7 @@ export default function Signup() {
   const { mutate: registerMutation, isPending: registering } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
+      console.log("After signup data===========>",data)
       const userData = {
         id: data.user.id,
         email: data.user.email,

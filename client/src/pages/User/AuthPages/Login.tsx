@@ -54,12 +54,12 @@ export default function Login() {
   const googleLoginMutation = useMutation({
     mutationFn: googleLogin,
     onSuccess: (data) => {
-      console.log(data, "data after google login");
       const userData = {
         id: data.user.id,
         email: data.user.email,
         role: data.user.role,
         hasCompletedPreferences: true,
+        location: data.user.location,
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
       };
