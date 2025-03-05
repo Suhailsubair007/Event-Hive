@@ -9,3 +9,10 @@ export interface UpdatePremiumStatusData {
     return response.data;
   };
   
+  export const getUpdateProfileDetails = async (email: string) => {
+    const response = await axiosInstance.get("/auth/users", {
+      params: { email } 
+    });
+    console.log(response.data)
+    return response.data.user;
+  };
