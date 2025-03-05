@@ -47,3 +47,19 @@ export const editEvent = async (
     throw error;
   }
 };
+
+export const deleteEvent = async (eventId: string): Promise<any> => {
+  try {
+    const response = await axiosInstance.delete(`/event/events/${eventId}`);
+    
+    if (response.data.success) {
+      console.log("Event deleted successfully:", response.data);
+      return response.data; // Return updated events list if available
+    } else {
+      throw new Error("Event deletion failed.");
+    }
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    throw error;
+  }
+};

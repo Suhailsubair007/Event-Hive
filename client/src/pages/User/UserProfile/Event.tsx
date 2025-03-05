@@ -3,11 +3,10 @@ import { EventList } from "../../../ReusableComponents/EventManagement/event-lis
 import { AddEventModal } from "../../../ReusableComponents/EventManagement/add-event-modal";
 import { EditEventModal } from "../../../ReusableComponents/EventManagement/edit-event-modal";
 import type { Event } from "../../../types/Event-type";
-import { fetchEvents } from "../../../services/User/eventService";
+import { fetchEvents, deleteEvent } from "../../../services/User/eventService";
 import { LoadingEventsAnimation } from "../../../ReusableComponents/LoadingAnimations/LoadingEventsAnimation";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
-
 
 function Event() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -18,28 +17,29 @@ function Event() {
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const clientId = useSelector((state: any) => state?.user?.userInfo?.id);
 
-  useEffect(() => {
-    const getEvents = async () => {
-      try {
-        const data = await fetchEvents(clientId);
-        setEvents(data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const loadEvents = async () => {
+    try {
+      setIsLoading(true);
+      const data = await fetchEvents(clientId);
+      setEvents(data);
+      setIsError(false);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    getEvents();
-  }, []);
+  useEffect(() => {
+    loadEvents();
+  }, [clientId]);
 
   const handleAddEvent = (newEvent: Event) => {
     setEvents([...events, { ...newEvent, clientId: Date.now().toString() }]);
     setIsAddModalOpen(false);
     toast.success("Your event has been successfully created.");
   };
-  console.log("Data of the Events", events);
 
   const handleEditEvent = (updatedEvent: Event) => {
     setEvents(
@@ -47,15 +47,35 @@ function Event() {
         event.id === updatedEvent.id ? updatedEvent : event
       )
     );
-    console.log("sdjlfghsdkjlfgh", updatedEvent.id);
     setIsEditModalOpen(false);
     setCurrentEvent(null);
     toast.success("Your event has been successfully updated.");
   };
 
-  const handleDeleteEvent = (id: string) => {
-    setEvents(events.filter((event) => event.clientId !== id));
-    toast.success("Your event has been successfully deleted.");
+  const handleDeleteEvent = async (eventId: string | undefined) => {
+    // If eventId is undefined, show an error and return early
+    if (!eventId) {
+      toast.error("Cannot delete event: Missing event ID");
+      return;
+    }
+
+    try {
+      // Show loading toast
+      const loadingToast = toast.loading("Deleting event...");
+      
+      // Call the API to delete the event
+      await deleteEvent(eventId);
+      
+      // Update the local state to remove the deleted event
+      setEvents(events.filter((event) => event.id !== eventId));
+      
+      // Dismiss loading toast and show success toast
+      toast.dismiss(loadingToast);
+      toast.success("Your event has been successfully deleted.");
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event. Please try again.");
+    }
   };
 
   const openEditModal = (event: Event) => {

@@ -10,14 +10,14 @@ interface EventListProps {
   events: Event[]
   onAddEvent: () => void
   onEditEvent: (event: Event) => void
-  onDeleteEvent: (id: string) => void
+  onDeleteEvent: (id: string | undefined) => void
 }
 
 export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: EventListProps) {
   const [activeTab, setActiveTab] = useState("upcoming")
 
   const upcomingEvents = events.filter((event) => event.status === "upcoming")
-  const completedEvents = events.filter((event) => event.status === "expired")
+  const expiredEvents = events.filter((event) => event.status === "expired")
 
   const container = {
     hidden: { opacity: 0 },
@@ -48,7 +48,7 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
           <TabsTrigger value="upcoming" className={activeTab === "upcoming" ? "border-b-2 border-[#7848F4]" : ""}>
             Upcoming
           </TabsTrigger>
-          <TabsTrigger value="Expired" className={activeTab === "expired" ? "border-b-2 border-[#7848F4]" : ""}>
+          <TabsTrigger value="expired" className={activeTab === "expired" ? "border-b-2 border-[#7848F4]" : ""}>
             Completed
           </TabsTrigger>
         </TabsList>
@@ -60,36 +60,43 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
             initial="hidden"
             animate="show"
           >
-            {upcomingEvents.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onEdit={() => onEditEvent(event)}
-                onDelete={() => onDeleteEvent(event.id)}
-              />
-            ))}
+            {upcomingEvents.length > 0 ? (
+              upcomingEvents.map((event) => (
+                <EventCard
+                  key={event.id || `event-${event.clientId}`}
+                  event={event}
+                  onEdit={() => onEditEvent(event)}
+                  onDelete={() => onDeleteEvent(event.id)}
+                />
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-500 py-8">No upcoming events found.</p>
+            )}
           </motion.div>
         </TabsContent>
 
-        <TabsContent value="Expired">
+        <TabsContent value="expired">
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             variants={container}
             initial="hidden"
             animate="show"
           >
-            {completedEvents.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onEdit={() => onEditEvent(event)}
-                onDelete={() => onDeleteEvent(event.id)}
-              />
-            ))}
+            {expiredEvents.length > 0 ? (
+              expiredEvents.map((event) => (
+                <EventCard
+                  key={event.id || `event-${event.clientId}`}
+                  event={event}
+                  onEdit={() => onEditEvent(event)}
+                  onDelete={() => onDeleteEvent(event.id)}
+                />
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-500 py-8">No completed events found.</p>
+            )}
           </motion.div>
         </TabsContent>
       </Tabs>
     </div>
   )
 }
-

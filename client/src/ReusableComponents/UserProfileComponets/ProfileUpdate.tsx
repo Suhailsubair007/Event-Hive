@@ -11,6 +11,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "@/redux/userSlice";
+
 import {
   Select,
   SelectContent,
@@ -32,6 +35,7 @@ import {
   updateProfile,
   getUpdateProfileDetails,
 } from "../../services/User/userServices";
+import { useNavigate } from "react-router-dom";
 import { UpdateProfileAnimation } from "../LoadingAnimations/UpdateProfileAnimation";
 import { uploadImageToCloudinary } from "../../utils/imageUpload";
 import { toast } from "sonner";
@@ -58,6 +62,8 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const email = useSelector((state: any) => state?.user?.userInfo?.email || "");
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const initialUserData: UserData = {
     _id: "",
@@ -99,6 +105,11 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
       toast.error("Failed to update profile: " + (error as Error).message);
     },
   });
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    dispatch(logoutUser());
+    navigate("/");
+  };
 
   const handleChange = (field: keyof UserData, value: string) => {
     setUser((prev) => ({
@@ -136,11 +147,11 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
-  
+
       try {
         const cloudinaryUrl = await uploadImageToCloudinary(file);
         console.log("Cloudinary URL:", cloudinaryUrl); // Debugging line
-  
+
         if (cloudinaryUrl) {
           handleChange("profilePic", cloudinaryUrl);
           toast.success("Profile image uploaded successfully");
@@ -150,13 +161,12 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
       } catch (error) {
         console.error("Upload error:", error);
         toast.error("Failed to upload image");
-  
+
         // Revert to original image on error
         handleChange("profilePic", data?.profilePic || "");
       }
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -217,7 +227,10 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-red-500 focus:text-red-500">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="cursor-pointer text-red-500 focus:text-red-500"
+              >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

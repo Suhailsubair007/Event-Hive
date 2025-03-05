@@ -1,41 +1,27 @@
-import type React from "react";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { createEvent } from "../../services/User/eventService";
-import { toast } from "sonner";
-import { uploadImageToCloudinary } from "../../utils/imageUpload";
-import type {
-  Event,
-  EventFormData,
-  Location,
-  Ticket,
-} from "../../types/Event-type";
-import { MapPicker } from "./map-picker";
-import { TagInput } from "./tagInput";
-import { useSelector } from "react-redux";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+"use client"
+
+import type React from "react"
+import { useState, useRef } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import { createEvent } from "../../services/User/eventService"
+import { toast } from "sonner"
+import { uploadImageToCloudinary } from "../../utils/imageUpload"
+import type { Event, EventFormData, Location, Ticket } from "../../types/Event-type"
+import { MapPicker } from "./map-picker"
+import { TagInput } from "./tagInput"
+import { useSelector } from "react-redux"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface AddEventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (event: Event) => void;
+  isOpen: boolean
+  onClose: () => void
+  onSubmit: (event: Event) => void
 }
 
 const CATEGORIES = [
@@ -47,15 +33,11 @@ const CATEGORIES = [
   "Festivals",
   "Networking",
   "Other",
-];
+]
 
-export function AddEventModal({
-  isOpen,
-  onClose,
-  onSubmit,
-}: AddEventModalProps) {
-  const userId = useSelector((state: any) => state?.user?.userInfo?.id);
-  const email = useSelector((state: any) => state?.user?.userInfo?.email);
+export function AddEventModal({ isOpen, onClose, onSubmit }: AddEventModalProps) {
+  const userId = useSelector((state: any) => state?.user?.userInfo?.id)
+  const email = useSelector((state: any) => state?.user?.userInfo?.email)
 
   const [formData, setFormData] = useState<EventFormData>({
     clientId: userId || "",
@@ -77,56 +59,55 @@ export function AddEventModal({
     },
     posterImageUrl: "",
     category: "Music events",
-  });
+  })
 
-  const [posterImage, setPosterImage] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [posterImage, setPosterImage] = useState<File | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: Number(value) }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: Number(value) }))
+  }
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, hasVipTicket: checked }));
-  };
+    setFormData((prev) => ({ ...prev, hasVipTicket: checked }))
+  }
 
   const handleLocationChange = (location: Location) => {
-    setFormData((prev) => ({ ...prev, location }));
-  };
+    setFormData((prev) => ({ ...prev, location }))
+  }
 
   const handleTagsChange = (tags: string[]) => {
-    setFormData((prev) => ({ ...prev, tags }));
-  };
+    setFormData((prev) => ({ ...prev, tags }))
+  }
 
   const handleCategoryChange = (category: string) => {
-    setFormData((prev) => ({ ...prev, category }));
-  };
+    setFormData((prev) => ({ ...prev, category }))
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setPosterImage(e.target.files[0]);
+      setPosterImage(e.target.files[0])
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
       // Upload poster image if selected
-      let posterImageUrl = formData.posterImageUrl;
+      let posterImageUrl = formData.posterImageUrl
       if (posterImage) {
-        const uploadedImageUrl = await uploadImageToCloudinary(posterImage);
+        const uploadedImageUrl = await uploadImageToCloudinary(posterImage)
         if (uploadedImageUrl) {
-          posterImageUrl = uploadedImageUrl;
+          posterImageUrl = uploadedImageUrl
         }
       }
 
@@ -138,7 +119,7 @@ export function AddEventModal({
           availableSeats: formData.normalTicketCount,
           sold: 0,
         },
-      ];
+      ]
 
       // Add VIP ticket if enabled
       if (formData.hasVipTicket) {
@@ -147,7 +128,7 @@ export function AddEventModal({
           price: formData.vipTicketPrice,
           availableSeats: formData.vipTicketCount,
           sold: 0,
-        });
+        })
       }
 
       // Create the event object
@@ -155,9 +136,7 @@ export function AddEventModal({
         clientId: userId,
         title: formData.title,
         description: formData.description,
-        eventDate: new Date(
-          formData.eventDate + "T" + formData.startTime
-        ).toISOString(),
+        eventDate: new Date(formData.eventDate + "T" + formData.startTime).toISOString(),
         startTime: formData.startTime,
         endTime: formData.endTime,
         tickets,
@@ -166,22 +145,22 @@ export function AddEventModal({
         posterImageUrl,
         category: formData.category,
         status: "upcoming",
-      };
+      }
 
       // Create event through API
-      const createdEvent = await createEvent(newEvent);
+      const createdEvent = await createEvent(newEvent)
 
       // Call onSubmit with the created event
-      onSubmit(createdEvent);
+      onSubmit(createdEvent)
 
-      toast.success("Event created successfully!");
+      toast.success("Event created successfully!")
     } catch (error) {
-      console.error("Error creating event:", error);
-      toast.error("Failed to create event. Please try again.");
+      console.error("Error creating event:", error)
+      toast.error("Failed to create event. Please try again.")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -296,11 +275,7 @@ export function AddEventModal({
             </div>
 
             <div className="flex items-center space-x-2 mb-4">
-              <Checkbox
-                id="hasVipTicket"
-                checked={formData.hasVipTicket}
-                onCheckedChange={handleCheckboxChange}
-              />
+              <Checkbox id="hasVipTicket" checked={formData.hasVipTicket} onCheckedChange={handleCheckboxChange} />
               <Label htmlFor="hasVipTicket">VIP Ticket</Label>
             </div>
 
@@ -338,52 +313,45 @@ export function AddEventModal({
 
             <div>
               <Label>Tags</Label>
-              <TagInput
-                tags={formData.tags}
-                onChange={handleTagsChange}
-                placeholder="Add tags related to the event"
-              />
+              <TagInput tags={formData.tags} onChange={handleTagsChange} placeholder="Add tags related to the event" />
             </div>
 
             <div>
               <Label>Location</Label>
-              <MapPicker
-                location={formData.location}
-                onLocationChange={handleLocationChange}
-              />
+              <MapPicker location={formData.location} onLocationChange={handleLocationChange} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="posterImage" className="cursor-pointer">
-                  <Button type="button">Upload Image</Button>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="cursor-pointer"
-                  />
-                </label>
+            <div>
+              <Label htmlFor="posterImage">Event Image</Label>
+              <div className="mt-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
+                <Button type="button" onClick={() => fileInputRef.current?.click()} className="mb-2">
+                  Upload Image
+                </Button>
+                {posterImage && <p className="text-sm text-muted-foreground mt-1">Selected: {posterImage.name}</p>}
               </div>
+            </div>
 
-              <div>
-                <Label htmlFor="category">Event category</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={handleCategoryChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="category">Event category</Label>
+              <Select value={formData.category} onValueChange={handleCategoryChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -391,16 +359,13 @@ export function AddEventModal({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              className="bg-[#7848F4] hover:bg-[#6a3ee0]"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" className="bg-[#7848F4] hover:bg-[#6a3ee0]" disabled={isSubmitting}>
               {isSubmitting ? "Creating Event..." : "Create Event"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+

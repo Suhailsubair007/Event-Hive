@@ -1,42 +1,26 @@
-import type React from "react";
-import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { editEvent } from "../../services/User/eventService"; // Import editEvent service
-import { toast } from "sonner";
-import { uploadImageToCloudinary } from "../../utils/imageUpload";
-import type {
-  Event,
-  EventFormData,
-  Location,
-  Ticket,
-} from "../../types/Event-type";
-import { MapPicker } from "./map-picker";
-import { TagInput } from "./tagInput";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSelector } from "react-redux";
+import type React from "react"
+import { useState, useEffect } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
+import { editEvent } from "../../services/User/eventService" // Import editEvent service
+import { toast } from "sonner"
+import { uploadImageToCloudinary } from "../../utils/imageUpload"
+import type { Event, EventFormData, Location, Ticket } from "../../types/Event-type"
+import { MapPicker } from "./map-picker"
+import { TagInput } from "./tagInput"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useSelector } from "react-redux"
 
 interface EditEventModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (event: Event) => void;
-  event: Event;
+  isOpen: boolean
+  onClose: () => void
+  onSubmit: (event: Event) => void
+  event: Event
 }
 
 const CATEGORIES = [
@@ -48,15 +32,10 @@ const CATEGORIES = [
   "Festivals",
   "Networking",
   "Other",
-];
+]
 
-export function EditEventModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  event,
-}: EditEventModalProps) {
-  const email = useSelector((state: any) => state?.user?.userInfo?.email);
+export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventModalProps) {
+  const email = useSelector((state: any) => state?.user?.userInfo?.email)
 
   const [formData, setFormData] = useState<EventFormData>({
     clientId: "",
@@ -78,18 +57,18 @@ export function EditEventModal({
     },
     posterImageUrl: "",
     category: "",
-  });
+  })
 
-  const [posterImage, setPosterImage] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [posterImage, setPosterImage] = useState<File | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Initialize form data from event
   useEffect(() => {
     if (event) {
-      const normalTicket = event.tickets.find((t) => t.type === "normal");
-      const vipTicket = event.tickets.find((t) => t.type === "VIP");
-      const eventDate = new Date(event.eventDate);
-      const formattedDate = eventDate.toISOString().split("T")[0];
+      const normalTicket = event.tickets.find((t) => t.type === "normal")
+      const vipTicket = event.tickets.find((t) => t.type === "VIP")
+      const eventDate = new Date(event.eventDate)
+      const formattedDate = eventDate.toISOString().split("T")[0]
 
       setFormData({
         clientId: event.clientId,
@@ -107,55 +86,53 @@ export function EditEventModal({
         location: event.location,
         posterImageUrl: event.posterImageUrl,
         category: event.category,
-      });
+      })
     }
-  }, [event]);
+  }, [event])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: Number(value) }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: Number(value) }))
+  }
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, hasVipTicket: checked }));
-  };
+    setFormData((prev) => ({ ...prev, hasVipTicket: checked }))
+  }
 
   const handleLocationChange = (location: Location) => {
-    setFormData((prev) => ({ ...prev, location }));
-  };
+    setFormData((prev) => ({ ...prev, location }))
+  }
 
   const handleTagsChange = (tags: string[]) => {
-    setFormData((prev) => ({ ...prev, tags }));
-  };
+    setFormData((prev) => ({ ...prev, tags }))
+  }
 
   const handleCategoryChange = (category: string) => {
-    setFormData((prev) => ({ ...prev, category }));
-  };
+    setFormData((prev) => ({ ...prev, category }))
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setPosterImage(e.target.files[0]);
+      setPosterImage(e.target.files[0])
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
       // Upload new poster image if selected
-      let posterImageUrl = formData.posterImageUrl;
+      let posterImageUrl = formData.posterImageUrl
       if (posterImage) {
-        const uploadedImageUrl = await uploadImageToCloudinary(posterImage);
+        const uploadedImageUrl = await uploadImageToCloudinary(posterImage)
         if (uploadedImageUrl) {
-          posterImageUrl = uploadedImageUrl;
+          posterImageUrl = uploadedImageUrl
         }
       }
 
@@ -167,7 +144,7 @@ export function EditEventModal({
           availableSeats: formData.normalTicketCount,
           sold: event.tickets.find((t) => t.type === "normal")?.sold || 0,
         },
-      ];
+      ]
 
       // Add VIP ticket if enabled
       if (formData.hasVipTicket) {
@@ -176,7 +153,7 @@ export function EditEventModal({
           price: formData.vipTicketPrice,
           availableSeats: formData.vipTicketCount,
           sold: event.tickets.find((t) => t.type === "VIP")?.sold || 0,
-        });
+        })
       }
 
       // Create the updated event object
@@ -184,9 +161,7 @@ export function EditEventModal({
         ...event,
         title: formData.title,
         description: formData.description,
-        eventDate: new Date(
-          formData.eventDate + "T" + formData.startTime
-        ).toISOString(),
+        eventDate: new Date(formData.eventDate + "T" + formData.startTime).toISOString(),
         startTime: formData.startTime,
         endTime: formData.endTime,
         tickets,
@@ -194,23 +169,23 @@ export function EditEventModal({
         location: formData.location,
         posterImageUrl,
         category: formData.category,
-      };
+      }
 
-      console.log(updatedEvent,"Updated event dataaa")
+      console.log(updatedEvent, "Updated event dataaa")
 
       // Call editEvent service
       if (event.id) {
-        const editedEvent = await editEvent(event.id, updatedEvent);
-        onSubmit(editedEvent);
-        toast.success("Event updated successfully!");
+        const editedEvent = await editEvent(event.id, updatedEvent)
+        onSubmit(editedEvent)
+        toast.success("Event updated successfully!")
       }
     } catch (error) {
-      console.error("Error updating event:", error);
-      toast.error("Failed to update event. Please try again.");
+      console.error("Error updating event:", error)
+      toast.error("Failed to update event. Please try again.")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -326,11 +301,7 @@ export function EditEventModal({
             </div>
 
             <div className="flex items-center space-x-2 mb-4">
-              <Checkbox
-                id="hasVipTicket"
-                checked={formData.hasVipTicket}
-                onCheckedChange={handleCheckboxChange}
-              />
+              <Checkbox id="hasVipTicket" checked={formData.hasVipTicket} onCheckedChange={handleCheckboxChange} />
               <Label htmlFor="hasVipTicket">VIP Ticket</Label>
             </div>
 
@@ -368,59 +339,45 @@ export function EditEventModal({
 
             <div>
               <Label>Tags</Label>
-              <TagInput
-                tags={formData.tags}
-                onChange={handleTagsChange}
-                placeholder="Add tags related to the event"
-              />
+              <TagInput tags={formData.tags} onChange={handleTagsChange} placeholder="Add tags related to the event" />
             </div>
 
             <div>
               <Label>Location</Label>
-              <MapPicker
-                location={formData.location}
-                onLocationChange={handleLocationChange}
-              />
+              <MapPicker location={formData.location} onLocationChange={handleLocationChange} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="posterImage" className="cursor-pointer">
-                  <Button type="button">Upload Image</Button>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="cursor-pointer"
-                  />
-                </label>
+            <div>
+              <Label htmlFor="posterImage">Event Image</Label>
+              <div className="mt-2">
+                <input id="posterImage" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                <Button type="button" onClick={() => document.getElementById("posterImage")?.click()} className="mb-2">
+                  Upload Image
+                </Button>
                 {formData.posterImageUrl && (
                   <img
-                    src={formData.posterImageUrl}
+                    src={formData.posterImageUrl || "/placeholder.svg"}
                     alt="Current poster"
-                    className="mt-2 w-32 h-32 object-cover"
+                    className="mt-2 w-32 h-32 object-cover rounded-md"
                   />
                 )}
               </div>
+            </div>
 
-              <div>
-                <Label htmlFor="category">Event category</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={handleCategoryChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="category">Event category</Label>
+              <Select value={formData.category} onValueChange={handleCategoryChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -428,16 +385,13 @@ export function EditEventModal({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              className="bg-[#7848F4] hover:bg-[#6a3ee0]"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" className="bg-[#7848F4] hover:bg-[#6a3ee0]" disabled={isSubmitting}>
               {isSubmitting ? "Updating Event..." : "Update Event"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+

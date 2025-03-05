@@ -11,12 +11,15 @@ import {
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "@/redux/userSlice";
 
+// Updated NavItem type to include optional active property
 type NavItem = {
   label: string;
   icon: React.ElementType;
   href: string;
-  active?: boolean;
+  active?: boolean; // Added this line
 };
 
 type NavSection = {
@@ -35,6 +38,7 @@ const UserSideBar: React.FC<SidebarProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navSections: NavSection[] = [
     {
@@ -58,12 +62,25 @@ const UserSideBar: React.FC<SidebarProps> = ({
   };
 
   const handleNavClick = (href: string) => {
-    navigate(href);
-    setIsOpen(false);
+    if (href === "/logout") {
+      handleLogout();
+    } else {
+      navigate(href);
+      onNavigate(href);
+      setIsOpen(false);
+    }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    dispatch(logoutUser());
+    navigate("/");
+    setIsOpen(false);
+    onNavigate("/");
+  };
+
   return (
     <>
-      {/* Mobile Toggle Button */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 bg-[#7848F4] text-white p-2 rounded-md"
         onClick={() => setIsOpen(!isOpen)}
@@ -71,7 +88,6 @@ const UserSideBar: React.FC<SidebarProps> = ({
         <Menu size={24} />
       </button>
 
-      {/* Sidebar */}
       <div
         className={cn(
           "fixed md:static inset-y-0 left-0 w-64 bg-white h-screen border-r border-gray-200 p-6 flex flex-col transition-transform",
@@ -80,12 +96,10 @@ const UserSideBar: React.FC<SidebarProps> = ({
           className
         )}
       >
-        {/* Sidebar Header */}
         <div className="flex items-center justify-between mb-10">
           <h1 className="text-xl font-bold">
             Event <span className="text-[#7848F4]">Hive</span>
           </h1>
-          {/* Close Button on Mobile */}
           <button
             className="md:hidden text-gray-600"
             onClick={() => setIsOpen(false)}
@@ -94,7 +108,6 @@ const UserSideBar: React.FC<SidebarProps> = ({
           </button>
         </div>
 
-        {/* Navigation Links */}
         <div className="flex-1">
           {navSections.map((section) => (
             <div key={section.title} className="mb-8">
@@ -131,7 +144,6 @@ const UserSideBar: React.FC<SidebarProps> = ({
           ))}
         </div>
 
-        {/* Settings Section (Pinned to Bottom) */}
         <div className="mt-auto">
           <h2 className="text-xs font-semibold text-gray-500 mb-4">
             {settingsSection.title}
@@ -140,6 +152,7 @@ const UserSideBar: React.FC<SidebarProps> = ({
             {settingsSection.items.map((item) => (
               <a
                 key={item.href}
+                href={item.href}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavClick(item.href);
@@ -162,7 +175,6 @@ const UserSideBar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Background Overlay (Mobile) */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 md:hidden"
