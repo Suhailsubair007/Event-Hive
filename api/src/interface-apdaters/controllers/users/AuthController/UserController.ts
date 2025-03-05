@@ -20,6 +20,7 @@ export class UserController {
           name: user.name,
           email: user.email,
           role: user.role,
+          location: user.location || null,
         },
         accessToken,
         refreshToken,

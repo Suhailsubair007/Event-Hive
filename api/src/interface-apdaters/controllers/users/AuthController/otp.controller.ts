@@ -8,7 +8,6 @@ export class OTPController {
   async sendOTP(req: Request, res: Response): Promise<void> {
     try {
       const { email } = req.body;
-      console.log(email,"--------------------------------------")
       if (!email) {
         res.status(400).json({ success: false, message: "Email is required" });
         return;

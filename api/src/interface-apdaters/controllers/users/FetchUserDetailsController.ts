@@ -8,7 +8,6 @@ export class FetchUserDetailsController {
   async fetchUserDetails(req: Request, res: Response): Promise<void> {
     try {
       const email = req.query.email as string;
-      console.log(email)
       const user = await this.fetchUserDetailsController.execute(email);
 
       res.status(200).json({ success: true, user });

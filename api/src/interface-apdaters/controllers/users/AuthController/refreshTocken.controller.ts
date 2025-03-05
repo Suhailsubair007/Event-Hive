@@ -5,7 +5,6 @@ import { TokenService } from "../../../../frameworks/Servise/Tocken.servise";
 export class RefreshTokenController {
   async refreshAccessToken(req: Request, res: Response): Promise<void> {
     const { refreshToken } = req.body;
-    console.log("Inside the controller to genarate new access tocken")
     if (!refreshToken) {
       res.status(401).json({ message: "Refresh token required" });
       return;

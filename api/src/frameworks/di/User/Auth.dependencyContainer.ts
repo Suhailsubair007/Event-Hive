@@ -25,10 +25,12 @@ import { UpdateProfile } from "../../../use-cases/user/User/updateProfile";
 import { UpdateProfileController } from "../../../interface-apdaters/controllers/users/updateProfileController";
 import { FetchUserDetails } from "../../../use-cases/user/User/getProfileDetails";
 import { FetchUserDetailsController } from "../../../interface-apdaters/controllers/users/FetchUserDetailsController";
+import { updateProfileRepository } from "../../../interface-apdaters/repositories/User/updateProfileREpository";
 
 // Instantiate repositories
 const userRepository = new UserRepository();
 const otpRepository = new OTPRepository();
+const updateProfileREpository = new updateProfileRepository();
 
 // Instantiate use cases
 const registerUser = new RegisterUser(userRepository);
@@ -74,11 +76,13 @@ const updateUserPremiumStatusController = new UpdateUserPremiumStatusController(
   updateUserPremiumStatusUseCase
 );
 
-const updateProfile = new UpdateProfile(userRepository);
+const updateProfile = new UpdateProfile(updateProfileREpository);
 const updateProfileController = new UpdateProfileController(updateProfile);
 
 const fetchUserDetails = new FetchUserDetails(userRepository);
-const fetchUserDetailsController = new FetchUserDetailsController(fetchUserDetails);
+const fetchUserDetailsController = new FetchUserDetailsController(
+  fetchUserDetails
+);
 
 const refreshTokenController = new RefreshTokenController();
 export {
@@ -91,5 +95,5 @@ export {
   refreshTokenController,
   updateUserPremiumStatusController,
   updateProfileController,
-  fetchUserDetailsController
+  fetchUserDetailsController,
 };

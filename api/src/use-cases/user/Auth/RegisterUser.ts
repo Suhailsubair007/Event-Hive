@@ -11,7 +11,7 @@ export class RegisterUser {
   async execute(userData: RegisterUserDTO): Promise<{
     accessToken: string;
     refreshToken: string;
-    user: { name: string; email: string; id: string; role: string };
+    user: { name: string; email: string; id: string; role: string;location?: { latitude: number; longitude: number }; };
   }> {
     const { email, password } = userData;
 
@@ -47,6 +47,10 @@ export class RegisterUser {
         name: createdUser.name,
         email: createdUser.email,
         role: createdUser.role || "user",
+        location: createdUser.location ? {
+          latitude: createdUser.location.latitude,
+          longitude: createdUser.location.longitude
+        } : undefined,
       },
     };
   }
