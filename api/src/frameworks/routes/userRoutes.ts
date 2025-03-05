@@ -43,7 +43,7 @@ userRoutes.patch("/users/:userId/profile", (req, res) =>
   updateProfileController.updateProfile(req, res)
 );
 
-userRoutes.get("/users/:email", (req, res) =>
+userRoutes.get("/users", (req, res) =>
   fetchUserDetailsController.fetchUserDetails(req, res)
 );
 
