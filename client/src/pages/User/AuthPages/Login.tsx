@@ -37,7 +37,7 @@ export default function Login() {
         location: data.user.location,
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
-        isPremium:data.user.isPremium
+        isPremium: data.user.isPremium,
       };
       if (data.success) {
         toast.success("Login Successful");
@@ -47,8 +47,19 @@ export default function Login() {
         toast.error("Login failed. Please check your credentials.");
       }
     },
-    onError: () => {
-      toast.error("An error occurred while logging in. Please try again.");
+    onError: (error: any) => {
+      if (error.response) {
+        const { status, data } = error.response;
+        if (status === 403) {
+          toast.warning("User is blocked. Please contact support");
+        } else if (data.message === "Invalid credentials") {
+          toast.error("Invalid email or password");
+        } else {
+          toast.error(data.message || "An error occurred while logging in.");
+        }
+      } else {
+        toast.warning("Network error. Please check your connection.");
+      }
     },
   });
 
@@ -94,7 +105,6 @@ export default function Login() {
       email: decodedToken.email,
       sub: decodedToken.sub,
     };
-
 
     googleLoginMutation.mutate(googleLoginData);
   };

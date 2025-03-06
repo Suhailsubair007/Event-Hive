@@ -28,6 +28,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Plus, Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { uploadImageToCloudinary } from "@/utils/imageUpload";
 import { AddCategoryAnimation } from "../LoadingAnimations/AddingCategoryAnimation";
 import {
@@ -93,10 +94,31 @@ export default function CategoryManagement() {
       setEditingCategory(null);
       setFormData({ name: "", description: "", imageUrl: "" });
       setFormErrors({});
-    } catch (error) {
-      console.error("Error saving category:", error);
+    } catch (error: any) {
+      // Handle specific backend errors
+      if (error.response) {
+        const { status, data } = error.response;
+        if (
+          status === 400 &&
+          data.message === "Category with this name already exists"
+        ) {
+          toast.error("Category with this name already exists");
+        } else if (
+          status === 400 &&
+          data.message === "Category ID is required"
+        ) {
+          toast.error("Category ID is required");
+        } else {
+          toast.error(
+            data.message || "Error saving category. Please try again."
+          );
+        }
+      } else {
+        toast.error("Network error. Please check your connection.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleToggleStatus = async (id: string, currentStatus: boolean) => {

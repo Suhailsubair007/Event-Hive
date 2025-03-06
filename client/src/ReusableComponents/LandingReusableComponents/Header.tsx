@@ -26,7 +26,9 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state?.user?.userInfo);
-  const latitude = useSelector((state: any) => state?.user?.userInfo?.location?.latitude);
+  const latitude = useSelector(
+    (state: any) => state?.user?.userInfo?.location?.latitude
+  );
 
   const longitude = useSelector(
     (state: any) => state?.user?.userInfo?.location?.longitude
@@ -82,7 +84,9 @@ const Header = () => {
             {user && (
               <div className="flex items-center text-gray-700">
                 <MapPin className="h-5 w-5 text-[#7848F4] mr-1" />
-                <span className="text-sm font-medium">{locationName.split(' ')[0]}</span>
+                <span className="text-sm font-medium">
+                  {locationName.split(" ")[0]}
+                </span>
               </div>
             )}
 
@@ -92,29 +96,31 @@ const Header = () => {
             </Button>
 
             {/* User Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5 text-gray-600" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  onClick={() => handleNavigate("/profile/update")}
-                >
-                  <UserIcon className="h-4 w-4 mr-2 text-[#7848F4]" />
-                  My Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleNavigate("/bookings")}>
-                  <Calendar className="h-4 w-4 mr-2 text-[#7848F4]" />
-                  My Bookings
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2 text-red-500" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5 text-gray-600" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem
+                    onClick={() => handleNavigate("/profile/update")}
+                  >
+                    <UserIcon className="h-4 w-4 mr-2 text-[#7848F4]" />
+                    My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleNavigate("/bookings")}>
+                    <Calendar className="h-4 w-4 mr-2 text-[#7848F4]" />
+                    My Bookings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2 text-red-500" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             {/* Mobile Menu Button */}
             <Button variant="ghost" size="icon" className="md:hidden">
