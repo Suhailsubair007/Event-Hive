@@ -1,10 +1,11 @@
-// src/infrastructure/database/models/CategoryModel.ts
-import { Schema, model, Document } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 import { ICategory } from "../../entities/modelInterface/Category";
 
-export interface CategoryDocument extends ICategory, Document {}
+export interface CategoryDocument extends ICategory, Document {
+  _id: import("mongoose").Types.ObjectId;
+}
 
-const CategorySchema = new Schema<CategoryDocument>({
+const categorySchema = new Schema<CategoryDocument>({
   name: { type: String, required: true },
   description: { type: String, required: true },
   imageUrl: { type: String, required: true },
@@ -14,5 +15,5 @@ const CategorySchema = new Schema<CategoryDocument>({
 
 export const CategoryModel = model<CategoryDocument>(
   "Category",
-  CategorySchema
+  categorySchema
 );

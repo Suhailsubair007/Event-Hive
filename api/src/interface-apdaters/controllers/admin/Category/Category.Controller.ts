@@ -31,7 +31,7 @@ export class CategoryContoller {
     } catch (error: any) {
       res.status(error.statusCode || 500).json({
         success: false,
-        messgae: error.message,
+        message: error.message, // Fixed typo: 'messgae' -> 'message'
       });
     }
   }
@@ -74,7 +74,7 @@ export class CategoryContoller {
     try {
       const { page, limit } = req.query;
 
-      const pageNumber = parseInt(page as string) || 1; 
+      const pageNumber = parseInt(page as string) || 1;
       const limitNumber = parseInt(limit as string) || 10;
 
       const categories = await this.getAllCategories.execute(pageNumber, limitNumber);

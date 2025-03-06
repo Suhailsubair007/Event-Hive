@@ -41,8 +41,7 @@ export class categoryRepository implements ICategoryRepository {
 
   async findAllCategories(page: number, limit: number): Promise<ICategory[]> {
     return CategoryModel.find()
-      .skip((page - 1) * limit) 
-      .limit(limit); 
+      .skip((page - 1) * limit)
+      .limit(limit);
   }
-  
 }

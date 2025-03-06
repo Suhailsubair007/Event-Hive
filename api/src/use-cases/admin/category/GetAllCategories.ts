@@ -1,4 +1,3 @@
-
 import { ICategoryRepository } from "../../../entities/repositoryInterface/Admin/interface.categoryRepository";
 import { ICategory } from "../../../entities/modelInterface/Category";
 

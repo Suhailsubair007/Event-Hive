@@ -14,7 +14,7 @@ export class EditCategory {
       const existingCategory = await this.categoryRepository.findByName(
         category.name
       );
-      if (existingCategory?.name === category?.name) {
+      if (existingCategory && existingCategory._id?.toString() !== id) {
         throw new CustomError("Category with this name already exists", 400);
       }
     }
