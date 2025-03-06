@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSelector } from "react-redux";
 import {
@@ -57,8 +58,66 @@ interface ProfileUpdateProps {
   onSave?: (data: UserData) => void;
 }
 
+// Validation function
+const validateFormData = (userData: UserData) => {
+  const errors: Partial<Record<keyof UserData, string>> = {};
+  const nameRegex = /^[a-zA-Z\s]*$/; // Only letters and spaces
+  const phoneRegex = /^\d{10}$/; // Exactly 10 digits
+
+  // Name validation
+  const trimmedName = userData.name.trim();
+  if (!trimmedName) {
+    errors.name = "Name is required";
+  } else if (!nameRegex.test(trimmedName)) {
+    errors.name = "Name can only contain letters and spaces";
+  }
+
+  // Nickname validation
+  const trimmedNickname = userData.nickname.trim();
+  if (trimmedNickname && !nameRegex.test(trimmedNickname)) {
+    errors.nickname = "Nickname can only contain letters and spaces";
+  }
+
+  // Phone validation
+  const trimmedPhone = userData.phone.trim();
+  if (!trimmedPhone) {
+    errors.phone = "Phone number is required";
+  } else if (!phoneRegex.test(trimmedPhone)) {
+    errors.phone = "Phone number must be exactly 10 digits";
+  }
+
+  // Country validation
+  const trimmedCountry = userData.country.trim();
+  if (!trimmedCountry) {
+    errors.country = "Country is required";
+  } else if (!nameRegex.test(trimmedCountry)) {
+    errors.country = "Country can only contain letters and spaces";
+  }
+
+  // Gender validation
+  if (!userData.gender) {
+    errors.gender = "Gender is required";
+  }
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+    sanitizedData: {
+      ...userData,
+      name: trimmedName,
+      nickname: trimmedNickname,
+      phone: trimmedPhone,
+      country: trimmedCountry,
+    },
+  };
+};
+
 const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<
+    Partial<Record<keyof UserData, string>>
+  >({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const email = useSelector((state: any) => state?.user?.userInfo?.email || "");
   const queryClient = useQueryClient();
@@ -98,6 +157,7 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
       queryClient.setQueryData(["profile", email], updatedData);
       queryClient.invalidateQueries({ queryKey: ["profile", email] });
       setIsEditing(false);
+      setValidationErrors({});
       onSave(updatedData);
       toast.success("Profile updated successfully");
     },
@@ -105,6 +165,7 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
       toast.error("Failed to update profile: " + (error as Error).message);
     },
   });
+
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
     dispatch(logoutUser());
@@ -116,15 +177,30 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
       ...prev,
       [field]: value,
     }));
+    // Clear error for this field when user starts typing
+    if (validationErrors[field]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [field]: undefined,
+      }));
+    }
   };
 
   const handleSave = () => {
+    const validation = validateFormData(user);
+
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      toast.error("Please fix the form errors");
+      return;
+    }
+
     const updates: Partial<UserData> = {
-      name: user.name,
-      phone: user.phone,
-      country: user.country,
-      gender: user.gender,
-      nickname: user.nickname,
+      name: validation.sanitizedData.name,
+      phone: validation.sanitizedData.phone,
+      country: validation.sanitizedData.country,
+      gender: validation.sanitizedData.gender,
+      nickname: validation.sanitizedData.nickname,
       profilePic: user.profilePic,
     };
 
@@ -144,13 +220,13 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
   if (error) {
     return <div>Error loading profile: {(error as Error).message}</div>;
   }
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
-
+      setIsUploading(true);
       try {
         const cloudinaryUrl = await uploadImageToCloudinary(file);
-
         if (cloudinaryUrl) {
           handleChange("profilePic", cloudinaryUrl);
           toast.success("Profile image uploaded successfully");
@@ -160,9 +236,9 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
       } catch (error) {
         console.error("Upload error:", error);
         toast.error("Failed to upload image");
-
-        // Revert to original image on error
         handleChange("profilePic", data?.profilePic || "");
+      } finally {
+        setIsUploading(false);
       }
     }
   };
@@ -250,7 +326,7 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
               <div className="relative group">
                 <motion.div
                   whileHover={{ scale: 1.05 }}
-                  className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary/10"
+                  className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary/10 relative"
                 >
                   <img
                     src={
@@ -259,11 +335,23 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-purple-600/20 backdrop-blur-sm flex items-center justify-center">
+                      <div className="relative">
+                        {/* Outer ring spinner */}
+                        <div className="absolute inset-0 border-2 border-purple-400 rounded-full animate-spin border-t-transparent"></div>
+                        {/* Inner loader */}
+                        <Loader2 className="h-6 w-6 text-purple-500 animate-spin" />
+                        {/* Pulse effect */}
+                        <div className="absolute inset-0 bg-purple-500/20 rounded-full animate-ping"></div>
+                      </div>
+                    </div>
+                  )}
                 </motion.div>
-                {isEditing && (
+                {isEditing && !isUploading && (
                   <button
                     onClick={triggerFileInput}
-                    className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg"
+                    className="absolute bottom-0 right-0 bg-primary text-white p-1.5 rounded-full shadow-lg hover:bg-purple-600 transition-colors"
                   >
                     <Camera size={14} />
                     <input
@@ -309,8 +397,15 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                   value={user.name || ""}
                   onChange={(e) => handleChange("name", e.target.value)}
                   disabled={!isEditing}
-                  className="rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
+                  className={`rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary ${
+                    validationErrors.name ? "border-red-500" : ""
+                  }`}
                 />
+                {validationErrors.name && (
+                  <p className="text-sm text-red-500">
+                    {validationErrors.name}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -322,8 +417,15 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                   value={user.nickname || ""}
                   onChange={(e) => handleChange("nickname", e.target.value)}
                   disabled={!isEditing}
-                  className="rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
+                  className={`rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary ${
+                    validationErrors.nickname ? "border-red-500" : ""
+                  }`}
                 />
+                {validationErrors.nickname && (
+                  <p className="text-sm text-red-500">
+                    {validationErrors.nickname}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -335,7 +437,11 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                   value={user.gender || ""}
                   onValueChange={(value) => handleChange("gender", value)}
                 >
-                  <SelectTrigger className="rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary">
+                  <SelectTrigger
+                    className={`rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary ${
+                      validationErrors.gender ? "border-red-500" : ""
+                    }`}
+                  >
                     <SelectValue placeholder="Select your Gender" />
                   </SelectTrigger>
                   <SelectContent>
@@ -347,6 +453,11 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                     </SelectItem>
                   </SelectContent>
                 </Select>
+                {validationErrors.gender && (
+                  <p className="text-sm text-red-500">
+                    {validationErrors.gender}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -358,8 +469,15 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                   value={user.country || ""}
                   onChange={(e) => handleChange("country", e.target.value)}
                   disabled={!isEditing}
-                  className="rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
+                  className={`rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary ${
+                    validationErrors.country ? "border-red-500" : ""
+                  }`}
                 />
+                {validationErrors.country && (
+                  <p className="text-sm text-red-500">
+                    {validationErrors.country}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -371,8 +489,15 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                   value={user.phone || ""}
                   onChange={(e) => handleChange("phone", e.target.value)}
                   disabled={!isEditing}
-                  className="rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary"
+                  className={`rounded-xl border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary ${
+                    validationErrors.phone ? "border-red-500" : ""
+                  }`}
                 />
+                {validationErrors.phone && (
+                  <p className="text-sm text-red-500">
+                    {validationErrors.phone}
+                  </p>
+                )}
               </div>
             </motion.div>
 
@@ -420,6 +545,9 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
                   <div>
                     <p className="font-medium text-gray-800">
                       {user.phone || "Not provided"}
+                    </p>
+                    <p className="text-sm text-red-500">
+                      {validationErrors.phone}
                     </p>
                     <p className="text-sm text-gray-500">1 month ago</p>
                   </div>

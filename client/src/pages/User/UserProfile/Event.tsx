@@ -53,23 +53,15 @@ function Event() {
   };
 
   const handleDeleteEvent = async (eventId: string | undefined) => {
-    // If eventId is undefined, show an error and return early
     if (!eventId) {
       toast.error("Cannot delete event: Missing event ID");
       return;
     }
 
     try {
-      // Show loading toast
       const loadingToast = toast.loading("Deleting event...");
-      
-      // Call the API to delete the event
       await deleteEvent(eventId);
-      
-      // Update the local state to remove the deleted event
       setEvents(events.filter((event) => event.id !== eventId));
-      
-      // Dismiss loading toast and show success toast
       toast.dismiss(loadingToast);
       toast.success("Your event has been successfully deleted.");
     } catch (error) {

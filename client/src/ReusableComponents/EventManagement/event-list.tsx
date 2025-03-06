@@ -1,23 +1,23 @@
-import { useState } from "react"
-import type { Event } from "../../types/Event-type"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { EventCard } from "./eventCard"
-import { ChevronLeft } from "lucide-react"
-import { motion } from "framer-motion"
+import { useState } from "react";
+import type { Event } from "../../types/Event-type";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EventCard } from "./eventCard";
+import { ChevronLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface EventListProps {
-  events: Event[]
-  onAddEvent: () => void
-  onEditEvent: (event: Event) => void
-  onDeleteEvent: (id: string | undefined) => void
+  events: Event[];
+  onAddEvent: () => void;
+  onEditEvent: (event: Event) => void;
+  onDeleteEvent: (id: string | undefined) => void;
 }
 
 export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: EventListProps) {
-  const [activeTab, setActiveTab] = useState("upcoming")
+  const [activeTab, setActiveTab] = useState("upcoming");
 
-  const upcomingEvents = events.filter((event) => event.status === "upcoming")
-  const expiredEvents = events.filter((event) => event.status === "expired")
+  const upcomingEvents = events.filter((event) => event.status === "upcoming");
+  const expiredEvents = events.filter((event) => event.status === "expired");
 
   const container = {
     hidden: { opacity: 0 },
@@ -27,7 +27,7 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -98,5 +98,5 @@ export function EventList({ events, onAddEvent, onEditEvent, onDeleteEvent }: Ev
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
