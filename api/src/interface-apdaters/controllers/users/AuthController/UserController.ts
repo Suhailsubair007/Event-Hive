@@ -21,6 +21,7 @@ export class UserController {
           email: user.email,
           role: user.role,
           location: user.location || null,
+          isPremium: user.isPremiumUser,
         },
         accessToken,
         refreshToken,

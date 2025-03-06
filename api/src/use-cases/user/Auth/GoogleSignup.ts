@@ -13,7 +13,14 @@ export class GoogleSignUp {
   ): Promise<{
     accessToken: string;
     refreshToken: string;
-    user: { name: string; email: string; id: string; role: string;  location?: { latitude: number; longitude: number }; };
+    user: {
+      name: string;
+      email: string;
+      id: string;
+      role: string;
+      isPremiumUser?: boolean;
+      location?: { latitude: number; longitude: number };
+    };
   }> {
     let user = await this.userRepository.findByEmail(email);
 
@@ -55,10 +62,13 @@ export class GoogleSignUp {
         name: user.name,
         email: user.email,
         role: user.role || "user",
-        location: user.location ? {
-          latitude: user.location.latitude,
-          longitude: user.location.longitude
-        } : undefined,
+        location: user.location
+          ? {
+              latitude: user.location.latitude,
+              longitude: user.location.longitude,
+            }
+          : undefined,
+        isPremiumUser: user.isPremiumUser,
       },
     };
   }

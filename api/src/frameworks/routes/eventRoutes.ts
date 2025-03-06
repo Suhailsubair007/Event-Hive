@@ -15,23 +15,29 @@ const eventRoutes = express.Router();
 
 eventRoutes.post(
   "/add",
-  // authenticateToken,
-  // authorizeRoles(["user"]),
+  authenticateToken,
+  authorizeRoles(["user"]),
   (req, res) => addEventController.addEvent(req, res)
 );
 eventRoutes.post(
   "/edit/:eventId",
-  // authenticateToken,
-  // authorizeRoles(["user"]),
+  authenticateToken,
+  authorizeRoles(["user"]),
   (req, res) => editEventController.editEvent(req, res)
 );
 
-eventRoutes.get("/events", (req, res) =>
-  listEventsController.listEvents(req, res)
+eventRoutes.get(
+  "/events",
+  authenticateToken,
+  authorizeRoles(["user"]),
+  (req, res) => listEventsController.listEvents(req, res)
 );
 
-eventRoutes.delete("/events/:eventId", (req, res) =>
-  deleteEventController.deleteEvent(req, res)
+eventRoutes.delete(
+  "/events/:eventId",
+  authenticateToken,
+  authorizeRoles(["user"]),
+  (req, res) => deleteEventController.deleteEvent(req, res)
 );
 
 export default eventRoutes;
