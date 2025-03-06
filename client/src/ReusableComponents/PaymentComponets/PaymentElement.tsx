@@ -27,7 +27,6 @@ const PaymentForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       setLoading(false);
     } else if (paymentIntent?.status === "succeeded") {
       onSuccess();
-      console.log("Payment Successful!");
     }
   };
 

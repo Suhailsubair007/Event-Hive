@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "@/pages/User/AuthPages/Login";
 import Signup from "@/pages/User/AuthPages/Signup";
 import PreferencesPage from "@/pages/User/AuthPages/Preference";
@@ -11,6 +11,8 @@ import ProfilePage from "@/pages/User/UserProfile/ProfilePage";
 import ProfileUpdate from "@/ReusableComponents/UserProfileComponets/ProfileUpdate";
 import GrandHostPromo from "@/ReusableComponents/UserProfileComponets/GrandHost";
 import Event from "@/pages/User/UserProfile/Event";
+import PremiumRoute from "./protected/User/PremiumRoute";
+
 const UserRoute: React.FC = () => {
   return (
     <>
@@ -59,8 +61,30 @@ const UserRoute: React.FC = () => {
         {/* Profile Section with Nested Routes */}
         <Route path="/profile" element={<ProfilePage />}>
           <Route path="update" element={<ProfileUpdate />} />
-          <Route path="premium" element={<GrandHostPromo />} />
-          <Route path="event" element={<Event />} />
+          
+          {/* Premium Content Routes */}
+          <Route 
+            path="premium" 
+            element={
+              <UserPrivate>
+                <GrandHostPromo />
+              </UserPrivate>
+            } 
+          />
+          
+          <Route 
+            path="event" 
+            element={
+              <UserPrivate>
+                <PremiumRoute>
+                  <Event />
+                </PremiumRoute>
+              </UserPrivate>
+            } 
+          />
+          
+          {/* Default redirect for /profile */}
+          <Route path="" element={<Navigate to="/profile/update" replace />} />
         </Route>
       </Routes>
     </>

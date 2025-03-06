@@ -69,7 +69,6 @@ export default function Signup() {
   const { mutate: registerMutation, isPending: registering } = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      console.log("After signup data===========>",data)
       const userData = {
         id: data.user.id,
         email: data.user.email,
@@ -130,7 +129,6 @@ export default function Signup() {
       { email: form.email },
       {
         onSuccess: (data) => {
-          console.log("OTP Sent:", data);
           setOtpModal(true);
         },
         onError: (error) => {

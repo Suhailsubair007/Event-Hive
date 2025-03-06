@@ -1,36 +1,62 @@
-import { motion } from "framer-motion"
-import { Calendar, MapPin, Clock } from "lucide-react"
+import { motion } from "framer-motion";
+import { Calendar, MapPin, Clock, Tag } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getEvents } from "../../services/User/eventService";
 
-interface Event {
-  id: number
-  title: string
-  image: string
-  date: string
-  location: string
-  time: string
+interface Ticket {
+  type: string
+  price: number
+  availableSeats: number
+  sold: number
+  _id: string
 }
 
-const events: Event[] = [
-  {
-    id: 1,
-    title: "TechFest 2024",
-    image: "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_400/c_crop%2Cg_custom%2Fv1738864205%2Fedu35uglfzuojcys2otb.jpg",
-    date: "Mar 15, 2024",
-    location: "Kochi",
-    time: "10:00 AM",
-  },
-  {
-    id: 2,
-    title: "Music Festival",
-    image: "https://res.cloudinary.com/dwzmsvp7f/image/upload/f_auto,w_400/c_crop%2Cg_custom%2Fv1737836445%2Fskykgy7caaehvw3pw8ti.jpg",
-    date: "Mar 20, 2024",
-    location: "Trivandrum",
-    time: "6:00 PM",
-  },
-  // Add more events as needed
-]
+interface Event {
+  id: string
+  title: string
+  description: string
+  image: string
+  date: string
+  startTime: string
+  endTime: string
+  location: string
+  status: string
+  tickets: Ticket[]
+  tags: string[]
+}
 
 const EventsNearYou = () => {
+  const { 
+    data: events, 
+    isLoading, 
+    error 
+  } = useQuery({
+    queryKey: ['events'],
+    queryFn: getEvents,
+  })
+
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">Loading events...</div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center text-red-500">
+            Error loading events: {error.message}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +76,7 @@ const EventsNearYou = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event, index) => (
+          {events?.map((event: Event, index: number) => (
             <motion.div
               key={event.id}
               initial={{ opacity: 0, y: 20 }}
@@ -59,9 +85,13 @@ const EventsNearYou = () => {
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
             >
               <div className="relative h-48">
-                <img src={event.image || "/placeholder.svg"} alt={event.title} className="w-full h-full object-cover" />
+                <img 
+                  src={event.image || "/placeholder.svg"} 
+                  alt={event.title} 
+                  className="w-full h-full object-cover" 
+                />
                 <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-medium">
-                  Featured
+                  {event.status}
                 </div>
               </div>
               <div className="p-6">
@@ -71,14 +101,17 @@ const EventsNearYou = () => {
                     <Calendar className="h-4 w-4 mr-2" />
                     <span>{event.date}</span>
                   </div>
+                 
                   <div className="flex items-center">
                     <MapPin className="h-4 w-4 mr-2" />
-                    <span>{event.location}</span>
+                    <span className="line-clamp-1">{event.location}</span>
                   </div>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2" />
-                    <span>{event.time}</span>
-                  </div>
+                </div>
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-700">Tickets from:</p>
+                  <p className="text-lg font-bold">
+                    ₹{Math.min(...event.tickets.map(t => t.price))}
+                  </p>
                 </div>
                 <button className="mt-4 w-full bg-[#7848F4] text-white py-2 rounded-lg hover:bg-[#6a3ee0] transition-colors">
                   Book Now
@@ -93,4 +126,3 @@ const EventsNearYou = () => {
 }
 
 export default EventsNearYou
-

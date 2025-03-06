@@ -44,7 +44,6 @@ export default function AdminLogin() {
       if (data.success) {
         dispatch(setAdminDetails(adminData));
         toast.success("Login Successful");
-        console.log("Data after admin login-->", data);
         navigate("/admin/dashboard");
       } else {
         toast.error("Invalid credentials");

@@ -5,6 +5,7 @@ interface UserState {
     accessToken: string;
     refreshToken: string;
     role: "admin" | "user";
+    isPremium?: boolean;
     hasCompletedPreferences?: boolean;
   } | null;
 }
@@ -27,8 +28,15 @@ const userSlice = createSlice({
       state.userInfo = null;
       localStorage.removeItem("userInfo");
     },
+    setPremiumStatus: (state) => {
+      if (state.userInfo) {
+        state.userInfo.isPremium = true;
+        localStorage.setItem("userInfo", JSON.stringify(state.userInfo));
+      }
+    },
   },
 });
 
-export const { setUserDetails, logoutUser } = userSlice.actions;
+export const { setUserDetails, logoutUser, setPremiumStatus } =
+  userSlice.actions;
 export default userSlice.reducer;

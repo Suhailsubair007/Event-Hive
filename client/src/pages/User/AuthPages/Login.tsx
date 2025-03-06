@@ -37,6 +37,7 @@ export default function Login() {
         location: data.user.location,
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
+        isPremium:data.user.isPremium
       };
       if (data.success) {
         toast.success("Login Successful");
@@ -94,7 +95,6 @@ export default function Login() {
       sub: decodedToken.sub,
     };
 
-    console.log("Decoded JWT Data:", googleLoginData);
 
     googleLoginMutation.mutate(googleLoginData);
   };

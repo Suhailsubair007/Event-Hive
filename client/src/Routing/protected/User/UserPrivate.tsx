@@ -10,7 +10,6 @@ interface UserPrivateProps {
 
 const UserPrivate: React.FC<UserPrivateProps> = ({ children }) => {
   const userData = useSelector((state: RootState) => state.user.userInfo);
-  console.log('UserPrivate -> userData', userData);
 
   if (!userData || userData.role !== "user") {
     return <Navigate to="/" />;

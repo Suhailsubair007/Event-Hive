@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   User,
@@ -11,15 +11,17 @@ import {
   Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "@/redux/userSlice";
+import { RootState } from "@/redux/Store";
 
 // Updated NavItem type to include optional active property
 type NavItem = {
   label: string;
   icon: React.ElementType;
   href: string;
-  active?: boolean; // Added this line
+  active?: boolean;
+  premium?: boolean; // Flag to indicate premium route
 };
 
 type NavSection = {
@@ -39,16 +41,50 @@ const UserSideBar: React.FC<SidebarProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const userData = useSelector((state: RootState) => state.user.userInfo);
+  
+  // Get current path to set active state
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   const navSections: NavSection[] = [
     {
       title: "OVERVIEW",
       items: [
-        { label: "Profile", icon: User, href: "/profile/update", active: true },
-        { label: "Bookings", icon: Calendar, href: "/bookings" },
-        { label: "Wallet", icon: Wallet, href: "/wallet" },
-        { label: "Hosted Events", icon: Users, href: "/profile/premium" },
-        { label: "Group", icon: UserGroup, href: "/group" },
+        { 
+          label: "Profile", 
+          icon: User, 
+          href: "/profile/update", 
+          active: currentPath === "/profile/update" 
+        },
+        { 
+          label: "Bookings", 
+          icon: Calendar, 
+          href: "/bookings",
+          active: currentPath === "/bookings"
+        },
+        { 
+          label: "Wallet", 
+          icon: Wallet, 
+          href: "/wallet",
+          active: currentPath === "/wallet"
+        },
+        { 
+          label: "Hosted Events", 
+          icon: Users, 
+          href: userData?.isPremium ? "/profile/event" : "/profile/premium",
+          active: currentPath === "/profile/event" || currentPath === "/profile/premium",
+          premium: true
+        },
+        { 
+          label: "Group", 
+          icon: UserGroup, 
+          href: "/group",
+          active: currentPath === "/group"
+        },
       ],
     },
   ];
@@ -56,18 +92,29 @@ const UserSideBar: React.FC<SidebarProps> = ({
   const settingsSection: NavSection = {
     title: "SETTINGS",
     items: [
-      { label: "Settings", icon: Settings, href: "/settings" },
-      { label: "Logout", icon: LogOut, href: "/logout" },
+      { 
+        label: "Settings", 
+        icon: Settings, 
+        href: "/settings",
+        active: currentPath === "/settings"
+      },
+      { 
+        label: "Logout", 
+        icon: LogOut, 
+        href: "/logout" 
+      },
     ],
   };
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, isPremiumRoute?: boolean) => {
     if (href === "/logout") {
       handleLogout();
     } else {
       navigate(href);
       onNavigate(href);
       setIsOpen(false);
+      // Update current path for active state
+      setCurrentPath(href);
     }
   };
 
@@ -121,7 +168,7 @@ const UserSideBar: React.FC<SidebarProps> = ({
                     href={item.href}
                     onClick={(e) => {
                       e.preventDefault();
-                      handleNavClick(item.href);
+                      handleNavClick(item.href, item.premium);
                     }}
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",

@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { updateUserPremiumStatus } from "../../services/User/userServices";
 import { loadStripe } from "@stripe/stripe-js";
+import { setPremiumStatus } from "../../redux/userSlice";
 
 const stripePromise = loadStripe(
   "pk_test_51QyQmyQEbmBrayFW2R6XPL0s157RRkZQemdiWowp84f3X3VY2kN9K4lDFiMIWPrYpBnxpFVMcckLNzgyH1UjyBvE00w2DPwDm8"
@@ -13,28 +14,30 @@ const stripePromise = loadStripe(
 
 const GrandHostPromo: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const user = useSelector((state: any) => state?.user?.userInfo);
   const userId = useSelector((state: any) => state?.user?.userInfo?.id);
-  
-  // Check for payment success from URL parameters
+  const user = useSelector((state: any) => state?.user?.userInfo);
+  console.log("User Info ==>", user);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    // This checks if we're returning from Stripe with a payment_intent in the URL
     const query = new URLSearchParams(window.location.search);
     const paymentSuccess = query.get("payment_success");
-    
+
     if (paymentSuccess === "true") {
-      // Payment was successful, update user status
       handleSuccessfulPayment();
-      
-      // Remove the query parameter to prevent repeated calls
-      window.history.replaceState({}, document.title, window.location.pathname);
+      window.history.replaceState(
+        {},
+        document.title,
+        `${window.location.origin}/profile/premium`
+      );
     }
   }, []);
 
   const handleSuccessfulPayment = async () => {
     try {
       await updateUserPremiumStatus({ id: userId });
-      console.log("Premium status updated successfully");
+      dispatch(setPremiumStatus());
     } catch (error) {
       console.error("Error updating premium status:", error);
     }
@@ -43,23 +46,24 @@ const GrandHostPromo: React.FC = () => {
   const handleCheckout = async () => {
     setLoading(true);
     const stripe = await stripePromise;
-    if (!stripe) return;
+    if (!stripe) {
+      setLoading(false);
+      return;
+    }
 
     const { error } = await stripe.redirectToCheckout({
       lineItems: [{ price: "price_1QyabTQEbmBrayFWg4Pr7Yw7", quantity: 1 }],
       mode: "payment",
-      successUrl: `${window.location.origin}/success?payment_success=true`,
-      cancelUrl: `${window.location.origin}/cancel`,
+      successUrl: `${window.location.origin}/profile/premium?payment_success=true`,
+      cancelUrl: `${window.location.origin}/profile/premium`,
     });
 
     if (error) {
       console.error("Stripe Checkout Error:", error);
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  // ... rest of your component code (variants and return JSX) remains the same
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -97,9 +101,7 @@ const GrandHostPromo: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
-        {/* Component content remains the same */}
         <div className="flex flex-col lg:flex-row">
-          {/* Content Section */}
           <motion.div
             className="p-8 lg:p-12 lg:w-1/2 flex flex-col justify-center"
             variants={containerVariants}
@@ -202,14 +204,12 @@ const GrandHostPromo: React.FC = () => {
             </motion.div>
           </motion.div>
 
-          {/* Image Section */}
           <motion.div
             className="lg:w-1/2 relative overflow-hidden"
             variants={imageVariants}
             initial="hidden"
             animate="visible"
           >
-            {/* Decorative elements */}
             <motion.div
               className="absolute top-10 right-10 w-20 h-20 rounded-full bg-primary/20 z-10"
               animate={{ scale: [1, 1.2, 1] }}
@@ -225,11 +225,9 @@ const GrandHostPromo: React.FC = () => {
               }}
             />
 
-            {/* Main image with overlay */}
             <div className="relative h-full min-h-[300px] lg:min-h-[500px]">
               <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-primary/40 mix-blend-multiply z-10"></div>
 
-              {/* Spotlight effect */}
               <motion.div
                 className="absolute top-1/4 left-1/2 transform -translate-x-1/2 w-32 h-32 rounded-full bg-white/30 blur-2xl z-10"
                 animate={{ opacity: [0.4, 0.7, 0.4] }}
@@ -242,7 +240,6 @@ const GrandHostPromo: React.FC = () => {
                 className="object-cover w-full h-full"
               />
 
-              {/* Floating cards */}
               <motion.div
                 className="absolute top-10 left-10 z-20"
                 animate={{ y: [0, -10, 0] }}

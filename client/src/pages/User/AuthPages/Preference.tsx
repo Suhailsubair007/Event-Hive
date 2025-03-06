@@ -63,7 +63,6 @@ export default function PreferencesPage() {
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>([]);
 
   const email = useSelector((state: any) => state?.user?.userInfo?.email);
-  console.log("email", email);
 
   const getCurrentLocation = () => {
     if ("geolocation" in navigator) {

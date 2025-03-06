@@ -56,7 +56,6 @@ export default function CategoryManagement() {
   });
 
   React.useEffect(() => {
-    console.log("Fetching categories for page:", currentPage);
     fetchCategories();
   }, [currentPage]);
 
@@ -66,7 +65,6 @@ export default function CategoryManagement() {
         currentPage,
         limit
       );
-      console.log("API Response:", response); // Add this log
       setCategories(response.categories);
       setTotalPages(Math.ceil(response.total / limit));
     } catch (error) {
@@ -297,7 +295,6 @@ export default function CategoryManagement() {
               <PaginationPrevious
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log("Previous clicked");
                   handlePageChange(currentPage - 1);
                 }}
                 className={
@@ -310,7 +307,6 @@ export default function CategoryManagement() {
                 <PaginationLink
                   onClick={(e) => {
                     e.preventDefault();
-                    console.log("Page clicked:", page);
                     handlePageChange(page);
                   }}
                   isActive={currentPage === page}
@@ -323,7 +319,6 @@ export default function CategoryManagement() {
               <PaginationNext
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log("Next clicked");
                   handlePageChange(currentPage + 1);
                 }}
                 className={

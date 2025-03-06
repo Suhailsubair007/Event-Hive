@@ -150,7 +150,6 @@ const ProfileUpdate: React.FC<ProfileUpdateProps> = ({ onSave = () => {} }) => {
 
       try {
         const cloudinaryUrl = await uploadImageToCloudinary(file);
-        console.log("Cloudinary URL:", cloudinaryUrl); // Debugging line
 
         if (cloudinaryUrl) {
           handleChange("profilePic", cloudinaryUrl);

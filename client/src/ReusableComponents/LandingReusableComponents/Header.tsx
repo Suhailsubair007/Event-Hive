@@ -31,9 +31,7 @@ const Header = () => {
   const longitude = useSelector(
     (state: any) => state?.user?.userInfo?.location?.longitude
   );
-  console.log(latitude, "latitude");
-  console.log(longitude, "longitude");
-  console.log(user, "user");
+
   const [locationName, setLocationName] = useState<string>("Fetching...");
 
   useEffect(() => {

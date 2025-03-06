@@ -5,7 +5,6 @@ export const fetchEvents = async (clientId?: string): Promise<Event[]> => {
   const response = await axiosInstance.get("/event/events", {
     params: { clientId }, // Pass clientId as a query parameter
   });
-  console.log("Events data-->", response.data);
 
   return response.data.events.map((event: any) => ({
     id: event._id,
@@ -51,13 +50,34 @@ export const editEvent = async (
 export const deleteEvent = async (eventId: string): Promise<any> => {
   try {
     const response = await axiosInstance.delete(`/event/events/${eventId}`);
-    
+
     if (response.data.success) {
-      console.log("Event deleted successfully:", response.data);
-      return response.data; // Return updated events list if available
+      return response.data;
     } else {
       throw new Error("Event deletion failed.");
     }
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    throw error;
+  }
+};
+
+export const getEvents = async (): Promise<any> => {
+  try {
+    const response = await axiosInstance.get(`/event/events`);
+    return response.data.events.map((item: any) => ({
+      id: item._id,
+      title: item.title,
+      description: item.description,
+      image: item.posterImageUrl,
+      date: new Date(item.eventDate).toLocaleDateString(),
+      startTime: item.startTime,
+      endTime: item.endTime,
+      location: item.location.address,
+      status: item.status,
+      tickets: item.tickets,
+      tags: item.tags,
+    }));
   } catch (error) {
     console.error("Error deleting event:", error);
     throw error;

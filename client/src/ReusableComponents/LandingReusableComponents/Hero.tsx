@@ -8,7 +8,7 @@ const Hero = () => {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage:
-            "url(https://res.cloudinary.com/dupo7yv88/image/upload/v1739121646/yzbv7qtndn1tzxge3a81.svg)",
+            "url(https://res.cloudinary.com/dupo7yv88/image/upload/v1741209575/pexels-olly-787961_xknmai.jpg)",
           filter: "brightness(0.7)",
         }}
       />
@@ -18,7 +18,7 @@ const Hero = () => {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-6xl font-bold text-center mb-8"
+          className="text-4xl md:text-6xl font-bold text-center mb-12"
         >
           MADE FOR THOSE
           <br />
@@ -29,11 +29,11 @@ const Hero = () => {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-4"
+          className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-6 mt-8 transform transition-all hover:shadow-[0_0_25px_rgba(120,72,244,0.3)]"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="relative">
-              <select className="w-full p-3 border rounded-lg appearance-none text-black">
+              <select className="w-full p-4 border-none bg-gray-100 rounded-xl appearance-none text-black focus:ring-2 focus:ring-[#7848F4] transition-all text-sm">
                 <option>Select event type</option>
                 <option>Music</option>
                 <option>Tech</option>
@@ -41,7 +41,7 @@ const Hero = () => {
               </select>
             </div>
             <div className="relative">
-              <select className="w-full p-3 border rounded-lg appearance-none text-black">
+              <select className="w-full p-4 border-none bg-gray-100 rounded-xl appearance-none text-black focus:ring-2 focus:ring-[#7848F4] transition-all text-sm">
                 <option>Select location</option>
                 <option>Kochi</option>
                 <option>Trivandrum</option>
@@ -52,9 +52,9 @@ const Hero = () => {
               <input
                 type="text"
                 placeholder="Search events..."
-                className="w-full p-3 border rounded-l-lg text-black"
+                className="w-full p-4 border-none bg-gray-100 rounded-l-xl text-black focus:ring-2 focus:ring-[#7848F4] transition-all text-sm"
               />
-              <button className="bg-[#7848F4] text-white px-6 rounded-r-lg hover:bg-[#6a3ee0] transition-colors">
+              <button className="bg-[#7848F4] text-white px-6 rounded-r-xl hover:bg-[#6a3ee0] transition-all flex items-center justify-center">
                 <Search className="h-5 w-5" />
               </button>
             </div>

@@ -171,7 +171,6 @@ export function EditEventModal({ isOpen, onClose, onSubmit, event }: EditEventMo
         category: formData.category,
       }
 
-      console.log(updatedEvent, "Updated event dataaa")
 
       // Call editEvent service
       if (event.id) {
