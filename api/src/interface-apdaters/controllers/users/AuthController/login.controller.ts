@@ -20,6 +20,7 @@ export class LoginController {
           email: user.email,
           role: user.role,
           location: user.location || null,
+          isPremium:user.isPremiumUser
         },
         accessToken,
         refreshToken,
