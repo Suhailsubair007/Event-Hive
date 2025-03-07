@@ -35,7 +35,7 @@ import {
   type CategoryData,
   categoryService,
 } from "../../services/Admin/categoryService";
-import { validateCategoryForm } from "../../utils/validations/categoryValidation"; // Import the validation function
+import { validateCategoryForm } from "../../utils/validations/categoryValidation";
 
 export default function CategoryManagement() {
   const [categories, setCategories] = React.useState<CategoryData[]>([]);
@@ -72,15 +72,13 @@ export default function CategoryManagement() {
       console.error("Error fetching categories:", error);
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const errors = validateCategoryForm(formData);
     setFormErrors(errors);
 
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
+    if (Object.keys(errors).length > 0) return;
 
     setIsLoading(true);
     try {
@@ -94,28 +92,9 @@ export default function CategoryManagement() {
       setEditingCategory(null);
       setFormData({ name: "", description: "", imageUrl: "" });
       setFormErrors({});
+      toast.success(editingCategory ? "Category updated!" : "Category added!");
     } catch (error: any) {
-      // Handle specific backend errors
-      if (error.response) {
-        const { status, data } = error.response;
-        if (
-          status === 400 &&
-          data.message === "Category with this name already exists"
-        ) {
-          toast.error("Category with this name already exists");
-        } else if (
-          status === 400 &&
-          data.message === "Category ID is required"
-        ) {
-          toast.error("Category ID is required");
-        } else {
-          toast.error(
-            data.message || "Error saving category. Please try again."
-          );
-        }
-      } else {
-        toast.error("Network error. Please check your connection.");
-      }
+      toast.error(error.response?.data?.message || "Error saving category");
     } finally {
       setIsLoading(false);
     }
@@ -125,8 +104,9 @@ export default function CategoryManagement() {
     try {
       await categoryService.toggleCategoryStatus(id, !currentStatus);
       fetchCategories();
+      toast.success("Category status updated!");
     } catch (error) {
-      console.error("Error toggling category status:", error);
+      toast.error("Error updating status");
     }
   };
 
@@ -152,7 +132,7 @@ export default function CategoryManagement() {
       const imageUrl = await uploadImageToCloudinary(file);
       setFormData((prev) => ({ ...prev, imageUrl: imageUrl || "" }));
     } catch (error) {
-      console.error("Error uploading image:", error);
+      toast.error("Error uploading image");
     }
     setIsLoading(false);
   };
@@ -162,63 +142,67 @@ export default function CategoryManagement() {
       setCurrentPage(page);
     }
   };
-  if (isLoading) {
-    return <AddCategoryAnimation />;
-  }
+
+  if (isLoading) return <AddCategoryAnimation />;
 
   return (
-    <div className="w-full px-4 py-6">
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-[#7848F4]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className="mx-auto max-w-7xl">
+        {/* Header Section */}
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold tracking-tight text-[#7848F4]">
             Category Management
           </h1>
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
               <Button
-                className="bg-[#7848F4] hover:bg-[#6837E3]"
+                className="bg-[#7848F4] hover:bg-[#6837E3] transition-all duration-200 shadow-md"
                 onClick={() => {
                   setEditingCategory(null);
                   setFormData({ name: "", description: "", imageUrl: "" });
                   setFormErrors({});
                 }}
               >
-                <Plus className="mr-2 h-4 w-4" />
-                Add Category
+                <Plus className="mr-2 h-5 w-5" />
+                New Category
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-md bg-white rounded-xl shadow-2xl">
               <DialogHeader>
-                <DialogTitle>
-                  {editingCategory ? "Edit Category" : "Add New Category"}
+                <DialogTitle className="text-2xl text-[#7848F4]">
+                  {editingCategory ? "Edit Category" : "Create Category"}
                 </DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6 p-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Category Name</Label>
+                  <Label htmlFor="name" className="text-gray-700">
+                    Name
+                  </Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    placeholder="Enter category name"
-                    required
+                    placeholder="Category name"
+                    className="border-gray-200 focus:ring-[#7848F4]"
                   />
                   {formErrors.name && (
                     <p className="text-sm text-red-500">{formErrors.name}</p>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gray-700">
+                    Description
+                  </Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
-                    placeholder="Enter category description"
-                    required
+                    placeholder="Category description"
+                    className="border-gray-200 focus:ring-[#7848F4]"
                   />
                   {formErrors.description && (
                     <p className="text-sm text-red-500">
@@ -227,13 +211,15 @@ export default function CategoryManagement() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="image">Category Image</Label>
+                  <Label htmlFor="image" className="text-gray-700">
+                    Image
+                  </Label>
                   <div className="flex items-center gap-4">
                     {formData.imageUrl && (
                       <img
                         src={formData.imageUrl}
-                        alt="Category preview"
-                        className="h-16 w-16 rounded-full object-cover"
+                        alt="Preview"
+                        className="h-16 w-16 rounded-lg object-cover shadow-sm"
                       />
                     )}
                     <Input
@@ -241,24 +227,29 @@ export default function CategoryManagement() {
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
+                      className="border-gray-200"
                     />
                   </div>
                 </div>
-
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-end gap-3">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsAddModalOpen(false)}
+                    className="border-gray-200 hover:bg-gray-100"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-[#7848F4] hover:bg-[#6837E3]"
+                    className="bg-[#7848F4] hover:bg-[#6837E3] transition-all duration-200"
                     disabled={isLoading}
                   >
-                    {isLoading ? "Saving..." : "Save Category"}
+                    {isLoading
+                      ? "Saving..."
+                      : editingCategory
+                      ? "Update"
+                      : "Create"}
                   </Button>
                 </div>
               </form>
@@ -266,25 +257,39 @@ export default function CategoryManagement() {
           </Dialog>
         </div>
 
-        <div className="rounded-lg border bg-card">
+        {/* Table Section */}
+        <div className="rounded-xl bg-white shadow-lg border border-gray-100 overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Category Name</TableHead>
-                <TableHead>Category Image</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+              <TableRow className="bg-gray-50 hover:bg-gray-50">
+                <TableHead className="font-semibold text-gray-700">
+                  Name
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Image
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700">
+                  Status
+                </TableHead>
+                <TableHead className="font-semibold text-gray-700 text-right">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {categories.map((category) => (
-                <TableRow key={category._id} className="hover:bg-muted/50">
-                  <TableCell>{category.name}</TableCell>
+                <TableRow
+                  key={category._id}
+                  className="hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <TableCell className="font-medium text-gray-900">
+                    {category.name}
+                  </TableCell>
                   <TableCell>
                     <img
                       src={category.imageUrl || "/placeholder.svg"}
                       alt={category.name}
-                      className="h-12 w-12 rounded-full object-cover"
+                      className="h-12 w-12 rounded-lg object-cover shadow-sm"
                     />
                   </TableCell>
                   <TableCell>
@@ -299,8 +304,9 @@ export default function CategoryManagement() {
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="sm"
                       onClick={() => handleEdit(category)}
+                      className="hover:bg-[#7848F4]/10"
                     >
                       <Pencil className="h-4 w-4 text-[#7848F4]" />
                     </Button>
@@ -311,17 +317,20 @@ export default function CategoryManagement() {
           </Table>
         </div>
 
-        <Pagination className="mt-4">
-          <PaginationContent>
+        {/* Pagination */}
+        <Pagination className="mt-6">
+          <PaginationContent className="bg-white rounded-lg p-2 shadow-md">
             <PaginationItem>
               <PaginationPrevious
                 onClick={(e) => {
                   e.preventDefault();
                   handlePageChange(currentPage - 1);
                 }}
-                className={
-                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                }
+                className={`${
+                  currentPage === 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-[#7848F4]/10"
+                } text-[#7848F4]`}
               />
             </PaginationItem>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -332,6 +341,11 @@ export default function CategoryManagement() {
                     handlePageChange(page);
                   }}
                   isActive={currentPage === page}
+                  className={`${
+                    currentPage === page
+                      ? "bg-[#7848F4] text-white hover:bg-[#6837E3]"
+                      : "text-[#7848F4] hover:bg-[#7848F4]/10"
+                  } rounded-md`}
                 >
                   {page}
                 </PaginationLink>
@@ -343,11 +357,11 @@ export default function CategoryManagement() {
                   e.preventDefault();
                   handlePageChange(currentPage + 1);
                 }}
-                className={
+                className={`${
                   currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-[#7848F4]/10"
+                } text-[#7848F4]`}
               />
             </PaginationItem>
           </PaginationContent>

@@ -7,9 +7,17 @@ export interface CategoryData {
   imageUrl: string;
   isListed?: boolean;
 }
+interface CategoryResponse {
+  success: boolean;
+  categories: CategoryData[];
+  total: number;
+}
 
 export const categoryService = {
-  getAllCategories: async (page: number = 1, limit: number = 5) => {
+  getAllCategories: async (
+    page: number = 1,
+    limit: number = 5
+  ): Promise<CategoryResponse> => {
     const response = await adminAxiosInstance.get(
       `/admin/categories?page=${page}&limit=${limit}`
     );
@@ -17,7 +25,10 @@ export const categoryService = {
   },
 
   addCategory: async (categoryData: CategoryData) => {
-    const response = await adminAxiosInstance.post('/admin/categories', categoryData);
+    const response = await adminAxiosInstance.post(
+      "/admin/categories",
+      categoryData
+    );
     return response.data;
   },
 
@@ -30,9 +41,12 @@ export const categoryService = {
   },
 
   toggleCategoryStatus: async (id: string, isListed: boolean) => {
-    const response = await adminAxiosInstance.patch(`/admin/categories/${id}/list`, {
-      isListed,
-    });
+    const response = await adminAxiosInstance.patch(
+      `/admin/categories/${id}/list`,
+      {
+        isListed,
+      }
+    );
     return response.data;
   },
 };

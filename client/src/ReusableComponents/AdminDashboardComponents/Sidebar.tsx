@@ -9,6 +9,8 @@ import {
   LogOut,
   Menu,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { logoutAdmin } from "@/redux/adminSlice";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -45,11 +47,12 @@ const sidebarItems: SidebarItem[] = [
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
-    // Add logout logic here
+    localStorage.removeItem("adminInfo");
+    dispatch(logoutAdmin());
     navigate("/admin/login");
   };
 
