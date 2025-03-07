@@ -59,7 +59,9 @@ export default function Sidebar() {
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-primary">Event Hive</h1>
+        <h1 className="text-xl font-bold">
+          Event <span className="text-[#7848F4]">Hive</span>
+        </h1>
       </div>
       <ScrollArea className="flex-1 px-4">
         <nav className="flex flex-col gap-2">

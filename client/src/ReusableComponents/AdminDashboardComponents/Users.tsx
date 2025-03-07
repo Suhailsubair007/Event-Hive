@@ -73,7 +73,7 @@ export default function UserManagement() {
     <div className="w-full px-4 py-6">
       <div className="mx-auto max-w-8xl space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-bold text-[#7848F4]">User Management</h1>
+          <h1 className="text-2xl font-bold text-black">User Management</h1>
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input

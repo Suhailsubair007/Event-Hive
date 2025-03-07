@@ -30,7 +30,8 @@ import {
 import { Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { uploadImageToCloudinary } from "@/utils/imageUpload";
-import { AddCategoryAnimation } from "../LoadingAnimations/AddingCategoryAnimation";
+import { UploadIMageAnimation } from "../LoadingAnimations/UploadingImage";
+
 import {
   type CategoryData,
   categoryService,
@@ -143,14 +144,14 @@ export default function CategoryManagement() {
     }
   };
 
-  if (isLoading) return <AddCategoryAnimation />;
+  if (isLoading) return <UploadIMageAnimation />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="mx-auto max-w-7xl">
         {/* Header Section */}
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight text-[#7848F4]">
+          <h1 className="text-3xl font-bold tracking-tight text-black">
             Category Management
           </h1>
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>

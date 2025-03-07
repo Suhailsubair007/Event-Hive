@@ -38,7 +38,7 @@ const EventsTable: React.FC = () => {
 
   const handleLimitChange = (value: string) => {
     setLimit(Number(value));
-    setPage(1); // Reset to first page when changing limit
+    setPage(1); 
   };
 
   const formatDate = (dateString: string) => {
@@ -52,7 +52,7 @@ const EventsTable: React.FC = () => {
   const formatTime = (timeString: string) => {
     if (!timeString) return '';
     
-    // Handle time in format "HH:MM"
+
     const [hours, minutes] = timeString.split(':');
     const hour = parseInt(hours, 10);
     const ampm = hour >= 12 ? 'PM' : 'AM';
@@ -88,9 +88,9 @@ const EventsTable: React.FC = () => {
   const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" | null => {
     switch (status.toLowerCase()) {
       case 'upcoming':
-        return 'outline'; // Use "outline" for upcoming events
+        return 'outline';
       case 'live':
-        return 'default'; // Use "default" for live events (or another valid variant)
+        return 'default'; 
       case 'completed':
         return 'secondary';
       case 'cancelled':
@@ -119,8 +119,7 @@ const EventsTable: React.FC = () => {
   }
 
   const events = data?.events || [];
-  const totalPages = Math.ceil(events.length / limit); // This is a placeholder - ideally the API would return total count
-
+  const totalPages = Math.ceil(events.length / limit); 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -164,7 +163,6 @@ const EventsTable: React.FC = () => {
               <TableHead className="font-semibold text-primary-900">Location</TableHead>
               <TableHead className="font-semibold text-primary-900">Ticket Price</TableHead>
               <TableHead className="font-semibold text-primary-900">Status</TableHead>
-              <TableHead className="font-semibold text-primary-900 text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -243,22 +241,6 @@ const EventsTable: React.FC = () => {
                     <Badge variant={getStatusVariant(event.status)}>
                       {event.status}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-center gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
-                        <Eye className="h-4 w-4" />
-                        <span className="sr-only">View</span>
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:text-amber-700 hover:bg-amber-50">
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit</span>
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50">
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
-                      </Button>
-                    </div>
                   </TableCell>
                 </TableRow>
               ))
