@@ -39,9 +39,14 @@ export class categoryRepository implements ICategoryRepository {
     return CategoryModel.findByIdAndUpdate(id, { isListed }, { new: true });
   }
 
-  async findAllCategories(page: number, limit: number): Promise<ICategory[]> {
-    return CategoryModel.find()
+  async findAllCategories(
+    page: number,
+    limit: number
+  ): Promise<{ categories: ICategory[]; total: number }> {
+    const categories = await CategoryModel.find()
       .skip((page - 1) * limit)
       .limit(limit);
+    const total = await CategoryModel.countDocuments();
+    return { categories, total };
   }
 }

@@ -1,4 +1,3 @@
-// src/application/use-cases/ListCategory.ts
 import { ICategoryRepository } from "../../../entities/repositoryInterface/Admin/interface.categoryRepository";
 import { CustomError } from "../../../shared/utils/CustomError";
 import {ICategory} from '../../../entities/modelInterface/Category'
