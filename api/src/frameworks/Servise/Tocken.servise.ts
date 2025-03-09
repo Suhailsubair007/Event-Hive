@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 export class TokenService {
   static generateAccessToken(payload: { id: string; role?: string }): string {
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET as string, {
-      expiresIn: "30m",
+      expiresIn: "50m",
     });
   }
 
