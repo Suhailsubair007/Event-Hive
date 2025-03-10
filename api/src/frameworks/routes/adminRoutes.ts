@@ -47,4 +47,20 @@ adminRoutes.get("/events", (req, res) =>
 
 adminRoutes.post("/login", (req, res) => userController.adminLogin(req, res));
 
+
+
+// adminRoutes
+//   .route("/categories/:id")
+//   .post(authenticateToken, authorizeRoles(["admin"]), (req, res) => categoryController.edit(req, res))
+//   .patch(authenticateToken, authorizeRoles(["admin"]), (req, res) => categoryController.listUnlist(req, res));
+
+// adminRoutes
+//   .route("/users")
+//   .get(authenticateToken, authorizeRoles(["admin"]), (req, res) => userController.getUsers(req, res));
+
+// adminRoutes
+//   .route("/events")
+//   .get((req, res) => listAllEventsController.listAllEvents(req, res));
+
+
 export default adminRoutes;

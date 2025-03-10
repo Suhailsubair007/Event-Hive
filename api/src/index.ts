@@ -26,7 +26,7 @@ app.use(express.json());
 app.use("/api/auth", userRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/api/admin", adminRoutes);
-app.use(errorHandler); // Global error handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

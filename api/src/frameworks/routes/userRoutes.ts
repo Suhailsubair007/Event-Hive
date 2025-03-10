@@ -47,4 +47,27 @@ userRoutes.get("/users", (req, res) =>
   fetchUserDetailsController.fetchUserDetails(req, res)
 );
 
+
+// userRoutes
+//   .route("/register")
+//   .post((req, res) => userController.register(req, res));
+
+// userRoutes
+//   .route("/send-otp")
+//   .post((req, res) => otpController.sendOTP(req, res));
+
+// userRoutes
+//   .route("/login")
+//   .post((req, res) => loginController.login(req, res));
+
+// userRoutes
+//   .route("/verify_otp")
+//   .post((req, res) => verifyOtpController.verifyOTP(req, res));
+
+// userRoutes
+//   .route("/users/:userId")
+//   .patch((req, res) => updateUserPremiumStatusController.updatePremiumStatus(req, res))
+//   .patch((req, res) => updateProfileController.updateProfile(req, res));
+
+
 export default userRoutes;
