@@ -1,16 +1,26 @@
 import express from "express";
+import {
+  createSubscriptionController,
+  updateSubscriptionController,
+  createUserSubscriptionController,
+} from "../di/Admin/subscription.dependenContainer";
 
-const subscriptionRoutes = express.Router();
+const router = express.Router();
 
-import { createSubscriptionController , updateSubscriptionController} from "../di/Admin/subscription.dependenContainer";
+router
+  .post(
+    "/add",
+    createSubscriptionController.create.bind(createSubscriptionController)
+  )
+  .patch(
+    "/edit/:id",
+    updateSubscriptionController.update.bind(updateSubscriptionController)
+  )
+  .post(
+    "/user-subscriptions",
+    createUserSubscriptionController.create.bind(
+      createUserSubscriptionController
+    )
+  );
 
-subscriptionRoutes.post("/add", (req, res) =>
-  createSubscriptionController.create(req, res)
-);
-
-subscriptionRoutes.patch("/edit/:id", (req, res) =>
-  updateSubscriptionController.update(req, res)
-);
-
-export default subscriptionRoutes;
-    
+export default router;
