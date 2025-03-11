@@ -5,6 +5,7 @@ import cors from "cors";
 import userRoutes from "./frameworks/routes/userRoutes";
 import adminRoutes from "./frameworks/routes/adminRoutes";
 import eventRoutes from "./frameworks/routes/eventRoutes";
+import subscriptionRoutes from "./frameworks/routes/subscriptionRoutes";
 
 import { errorHandler } from "./interface-apdaters/middleware/errorHandler";
 
@@ -26,6 +27,8 @@ app.use(express.json());
 app.use("/api/auth", userRoutes);
 app.use("/api/event", eventRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/subscription", subscriptionRoutes);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {

@@ -10,9 +10,20 @@ export class CreateSubscription {
       throw new CustomError("Name and amount are required", 400);
     }
 
+    const existingSubscription = await this.subscriptionRepository.findByName(
+      subscriptionData.name
+    );
+    if (existingSubscription) {
+      throw new CustomError("Subscription name already exists", 400);
+    }
+
     const subscription = await this.subscriptionRepository.createSubscription(
       subscriptionData
     );
+    if (!subscription) {
+      throw new CustomError("Failed to create subscription", 500);
+    }
+
     return subscription;
   }
 }
