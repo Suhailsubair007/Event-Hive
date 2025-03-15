@@ -12,6 +12,7 @@ import ProfileUpdate from "@/ReusableComponents/UserProfileComponets/ProfileUpda
 import GrandHostPromo from "@/ReusableComponents/UserProfileComponets/GrandHost";
 import Event from "@/pages/User/UserProfile/Event";
 import PremiumRoute from "./protected/User/PremiumRoute";
+import MainEventPage from "@/pages/User/EventBooking/MainEventPage";
 
 const UserRoute: React.FC = () => {
   return (
@@ -57,32 +58,33 @@ const UserRoute: React.FC = () => {
             </UserPrivate>
           }
         />
+        <Route path="/mainEvent" element={<MainEventPage />} />
 
         {/* Profile Section with Nested Routes */}
         <Route path="/profile" element={<ProfilePage />}>
           <Route path="update" element={<ProfileUpdate />} />
-          
+
           {/* Premium Content Routes */}
-          <Route 
-            path="premium" 
+          <Route
+            path="premium"
             element={
               <UserPrivate>
                 <GrandHostPromo />
               </UserPrivate>
-            } 
+            }
           />
-          
-          <Route 
-            path="event" 
+
+          <Route
+            path="event"
             element={
               <UserPrivate>
                 <PremiumRoute>
                   <Event />
                 </PremiumRoute>
               </UserPrivate>
-            } 
+            }
           />
-          
+
           {/* Default redirect for /profile */}
           <Route path="" element={<Navigate to="/profile/update" replace />} />
         </Route>
