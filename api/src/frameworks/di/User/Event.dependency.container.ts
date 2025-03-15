@@ -7,6 +7,8 @@ import { ListEventsController } from "../../../interface-apdaters/controllers/us
 import { ListEvents } from "../../../use-cases/user/Events/ListEvents";
 import { DeleteEvent } from "../../../use-cases/user/Events/DeleteEvents";
 import { DeleteEventController } from "../../../interface-apdaters/controllers/users/EventsController/DeleteEventController";
+import { GetEventDetails } from "../../../use-cases/user/Events/GetEventDetails";
+import { GetEventDetailsController } from "../../../interface-apdaters/controllers/users/EventsController/GetEventDetailsController";
 
 const eventRepository = new EventRepository();
 
@@ -14,15 +16,20 @@ const addEvent = new AddEvent(eventRepository);
 const editEvent = new EditEvent(eventRepository);
 const listEvents = new ListEvents(eventRepository);
 const deleteEvent = new DeleteEvent(eventRepository);
+const getEventDetails = new GetEventDetails(eventRepository);
 
 const addEventController = new AddEventController(addEvent);
 const editEventController = new EditEventController(editEvent);
 const listEventsController = new ListEventsController(listEvents);
 const deleteEventController = new DeleteEventController(deleteEvent);
+const getEventDetailsController = new GetEventDetailsController(
+  getEventDetails
+);
 
 export {
   addEventController,
   editEventController,
   listEventsController,
   deleteEventController,
+  getEventDetailsController,
 };

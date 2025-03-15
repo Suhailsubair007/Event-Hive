@@ -9,6 +9,7 @@ import {
   editEventController,
   listEventsController,
   deleteEventController,
+  getEventDetailsController,
 } from "../di/User/Event.dependency.container";
 
 const eventRoutes = express.Router();
@@ -40,6 +41,12 @@ eventRoutes.delete(
   (req, res) => deleteEventController.deleteEvent(req, res)
 );
 
+eventRoutes.get(
+  "/events/:eventId",
+  // authenticateToken,
+  // authorizeRoles(["user"]),
+  (req, res) => getEventDetailsController.getEventDetails(req, res)
+);
 
 // eventRoutes
 //   .route("/events")
@@ -50,6 +57,5 @@ eventRoutes.delete(
 //   .route("/events/:eventId")
 //   .post(authenticateToken, authorizeRoles(["user"]), (req, res) => editEventController.editEvent(req, res))
 //   .delete(authenticateToken, authorizeRoles(["user"]), (req, res) => deleteEventController.deleteEvent(req, res));
-
 
 export default eventRoutes;

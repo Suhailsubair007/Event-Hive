@@ -7,4 +7,5 @@ export interface IEventRepository {
   markExpiredEvents(): Promise<void>;
   listEvents(page: number, limit: number, clientId?: string): Promise<Event[]>;
   deleteEvent(eventId: string): Promise<void>
+  findById(eventId: string): Promise<Event | null>;
 }

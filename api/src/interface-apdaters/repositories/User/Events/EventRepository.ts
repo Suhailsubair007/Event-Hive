@@ -1,4 +1,3 @@
-// src/infrastructure/repositories/EventRepository.ts
 import { IEventRepository } from "../../../../entities/repositoryInterface/User/interface.EventRepository";
 import { Event } from "../../../../entities/modelInterface/Event";
 import { EventModel } from "../../../../frameworks/databaseModels/EventModel";
@@ -45,7 +44,11 @@ export class EventRepository implements IEventRepository {
     );
   }
 
-  async listEvents(page: number, limit: number, clientId?: string): Promise<Event[]> {
+  async listEvents(
+    page: number,
+    limit: number,
+    clientId?: string
+  ): Promise<Event[]> {
     const query = clientId ? { clientId } : {};
     return EventModel.find(query)
       .skip((page - 1) * limit)
@@ -59,12 +62,14 @@ export class EventRepository implements IEventRepository {
         }))
       );
   }
-
-
   async deleteEvent(eventId: string): Promise<void> {
     const deletedEvent = await EventModel.findByIdAndDelete(eventId);
     if (!deletedEvent) {
       throw new CustomError("Event not found", 404);
     }
+  }
+
+  async findById(eventId: string): Promise<Event | null> {
+    return EventModel.findById(eventId);
   }
 }
