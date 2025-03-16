@@ -70,6 +70,9 @@ export class EventRepository implements IEventRepository {
   }
 
   async findById(eventId: string): Promise<Event | null> {
-    return EventModel.findById(eventId);
+    return EventModel.findById(eventId)
+      .populate("clientId", "name email")
+      .lean()
+      .exec();
   }
 }
