@@ -1,6 +1,23 @@
 import axiosInstance from "@/config/axiosInstence";
 import { Event } from "../../types/Event-type";
 
+export interface EventData {
+  id: string;
+  title: string;
+  subtitle?: string;
+  bannerImage: string;
+  category: string;
+  date: string;
+  time: string;
+  location: string;
+  price: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  hostedBy: string;
+  tags: string[];
+}
+
 export const fetchEvents = async (clientId?: string): Promise<Event[]> => {
   const response = await axiosInstance.get("/event/events", {
     params: { clientId }, // Pass clientId as a query parameter
@@ -80,6 +97,34 @@ export const getEvents = async (): Promise<any> => {
     }));
   } catch (error) {
     console.error("Error deleting event:", error);
+    throw error;
+  }
+};
+
+export const getEventDetails = async (eventId: string): Promise<EventData> => {
+  try {
+    const response = await axiosInstance.get(`/event/events/${eventId}`);
+    const event = response.data.event;
+    console.log("EVENT DATA ==> ", event);
+
+    return {
+      id: event._id,
+      title: event.title,
+      subtitle: undefined,
+      bannerImage: event.posterImageUrl,
+      category: event.category,
+      date: new Date(event.eventDate).toLocaleDateString(),
+      time: `${event.startTime} - ${event.endTime}`,
+      location: event.location.address,
+      price: `₹${Math.min(...event.tickets.map((t: any) => t.price))}`,
+      description: event.description,
+      latitude: event.location.latitude,
+      longitude: event.location.longitude,
+      hostedBy: event.clientId.name,
+      tags: event.tags,
+    };
+  } catch (error) {
+    console.error("Error fetching event details:", error);
     throw error;
   }
 };

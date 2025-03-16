@@ -58,7 +58,7 @@ const UserRoute: React.FC = () => {
             </UserPrivate>
           }
         />
-        <Route path="/mainEvent" element={<MainEventPage />} />
+        <Route path="/event/:eventId" element={<MainEventPage />} />
 
         {/* Profile Section with Nested Routes */}
         <Route path="/profile" element={<ProfilePage />}>

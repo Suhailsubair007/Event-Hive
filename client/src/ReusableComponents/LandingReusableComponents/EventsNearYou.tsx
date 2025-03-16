@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Calendar, MapPin, Clock, Tag } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getEvents } from "../../services/User/eventService";
+import { useNavigate } from "react-router-dom";
 
 interface Ticket {
   type: string
@@ -35,6 +36,9 @@ const EventsNearYou = () => {
     queryFn: getEvents,
   })
 
+  console.log("EVents===>",events)
+  const navigate = useNavigate();
+
   if (isLoading) {
     return (
       <section className="py-16 bg-gray-50">
@@ -44,6 +48,10 @@ const EventsNearYou = () => {
       </section>
     )
   }
+
+  const handleCardClick = (eventId: string) => {
+    navigate(`/event/${eventId}`);
+  };
 
   if (error) {
     return (
@@ -83,6 +91,7 @@ const EventsNearYou = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+              onClick={() => handleCardClick(event.id)}
             >
               <div className="relative h-48">
                 <img 

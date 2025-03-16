@@ -5,7 +5,9 @@ const MainEventPage = () => {
   return (
     <div>
       <Header />
-      <EventDetails />
+      <div className="pt-16">
+        <EventDetails />
+      </div>
     </div>
   );
 };
