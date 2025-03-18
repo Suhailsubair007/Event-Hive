@@ -10,6 +10,7 @@ import {
   listEventsController,
   deleteEventController,
   getEventDetailsController,
+  bookEventController,
 } from "../di/User/Event.dependency.container";
 
 const eventRoutes = express.Router();
@@ -48,6 +49,12 @@ eventRoutes.get(
   (req, res) => getEventDetailsController.getEventDetails(req, res)
 );
 
+eventRoutes.post(
+  "/book",
+  // authenticateToken,
+  // authorizeRoles(["user"]),
+  (req, res) => bookEventController.bookEvent(req, res)
+);
 // eventRoutes
 //   .route("/events")
 //   .post(authenticateToken, authorizeRoles(["user"]), (req, res) => addEventController.addEvent(req, res))
