@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Clock, Tag } from "lucide-react";
+import { Calendar, MapPin} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getEvents } from "../../services/User/eventService";
 import { useNavigate } from "react-router-dom";
@@ -36,7 +36,6 @@ const EventsNearYou = () => {
     queryFn: getEvents,
   })
 
-  console.log("EVents===>",events)
   const navigate = useNavigate();
 
   if (isLoading) {

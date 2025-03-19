@@ -69,8 +69,8 @@ const UserSideBar: React.FC<SidebarProps> = ({
         { 
           label: "Wallet", 
           icon: Wallet, 
-          href: "/wallet",
-          active: currentPath === "/wallet"
+          href: "/profile/wallet", 
+          active: currentPath === "/profile/wallet"
         },
         { 
           label: "Hosted Events", 

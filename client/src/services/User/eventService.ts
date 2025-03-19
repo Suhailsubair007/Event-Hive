@@ -20,7 +20,7 @@ export interface EventData {
 
 export const fetchEvents = async (clientId?: string): Promise<Event[]> => {
   const response = await axiosInstance.get("/event/events", {
-    params: { clientId }, // Pass clientId as a query parameter
+    params: { clientId }, 
   });
 
   return response.data.events.map((event: any) => ({

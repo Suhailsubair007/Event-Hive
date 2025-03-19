@@ -13,6 +13,7 @@ import GrandHostPromo from "@/ReusableComponents/UserProfileComponets/GrandHost"
 import Event from "@/pages/User/UserProfile/Event";
 import PremiumRoute from "./protected/User/PremiumRoute";
 import MainEventPage from "@/pages/User/EventBooking/MainEventPage";
+import WalletComponent from "@/ReusableComponents/UserProfileComponets/Wallet";
 
 const UserRoute: React.FC = () => {
   return (
@@ -63,6 +64,8 @@ const UserRoute: React.FC = () => {
         {/* Profile Section with Nested Routes */}
         <Route path="/profile" element={<ProfilePage />}>
           <Route path="update" element={<ProfileUpdate />} />
+          <Route path="wallet" element={<WalletComponent />} />
+
 
           {/* Premium Content Routes */}
           <Route

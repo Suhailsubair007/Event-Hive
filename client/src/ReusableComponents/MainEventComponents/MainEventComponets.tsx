@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "react-router-dom";
 import { getEventDetails, EventData } from "../../services/User/eventService";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { TicketModal } from "../TicketBooking/TicketModal";
 
 // Function to truncate text
 const truncateText = (text: string, maxLength = 200) => {
@@ -76,6 +77,7 @@ const EventPage: React.FC = () => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [event, setEvent] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -99,6 +101,14 @@ const EventPage: React.FC = () => {
     fetchEvent();
   }, [eventId]);
 
+  const handleBookTickets = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -108,13 +118,9 @@ const EventPage: React.FC = () => {
   }
 
   const osmUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${
-    event.longitude - 0.002 // Longitude first in the min corner
-  },${
-    event.latitude - 0.002 // Latitude second in the min corner
-  },${
-    event.longitude + 0.002 // Longitude first in the max corner
-  },${
-    event.latitude + 0.002 // Latitude second in the max corner
+    event.longitude - 0.002
+  },${event.latitude - 0.002},${event.longitude + 0.002},${
+    event.latitude + 0.002
   }&layer=mapnik&marker=${event.latitude},${event.longitude}`;
   return (
     <div className="max-w-6xl mx-auto p-4">
@@ -178,7 +184,10 @@ const EventPage: React.FC = () => {
                   <p className="text-xs text-gray-500">Starts from</p>
                   <p className="text-lg font-bold">{event.price}</p>
                 </div>
-                <Button className="bg-black text-white hover:bg-gray-800">
+                <Button
+                  className="bg-black text-white hover:bg-gray-800"
+                  onClick={handleBookTickets}
+                >
                   BOOK TICKETS
                 </Button>
               </div>
@@ -303,6 +312,7 @@ const EventPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && <TicketModal event={event} onClose={handleCloseModal} />}
     </div>
   );
 };

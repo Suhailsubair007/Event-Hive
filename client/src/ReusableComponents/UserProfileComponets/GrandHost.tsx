@@ -43,7 +43,7 @@ const GrandHostPromo: React.FC = () => {
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = async () => { 
     setLoading(true);
     const stripe = await stripePromise;
     if (!stripe) {

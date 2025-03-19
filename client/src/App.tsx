@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 import UserRoute from "./Routing/UserRoute";
 import AdminRoute from "./Routing/AdminRoute";
-// import
 
 const App: React.FC = () => {
   return <AppLayout />;
