@@ -2,9 +2,13 @@
 import { Request, Response } from "express";
 import { BookEvent } from "../../../../use-cases/user/Events/BookEvent";
 import { Booking } from "../../../../entities/modelInterface/Booking";
+import { IWalletRepository } from "../../../../entities/repositoryInterface/User/interface.WaleetRepository";
 
 export class BookEventController {
-  constructor(private bookEventController: BookEvent) {}
+  constructor(
+    private bookEventController: BookEvent,
+    private walletRepository: IWalletRepository
+  ) {}
 
   async bookEvent(req: Request, res: Response): Promise<void> {
     try {
@@ -25,7 +29,7 @@ export class BookEventController {
       const newBooking = await this.bookEventController.execute(booking);
       res.status(201).json({ success: true, booking: newBooking });
     } catch (error: any) {
-      res.status(500).json({
+      res.status(error.statusCode || 500).json({
         success: false,
         message: error.message,
       });
