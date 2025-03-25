@@ -1,12 +1,12 @@
 import axiosInstance from "@/config/axiosInstence";
 
-interface BookingTicket {
+export interface BookingTicket {
   type: string;
   quantity: number;
   price: number;
 }
 
-interface BookingRequest {
+export interface BookingRequest {
   userId: string;
   eventId: string;
   tickets: BookingTicket[];
@@ -15,8 +15,8 @@ interface BookingRequest {
   paymentMethod: string;
 }
 
-interface BookingResponse {
-  bookingId: string;
+export interface BookingResponse {
+  bookingId: string;  
   userId: string;
   eventId: string;
   tickets: BookingTicket[];
@@ -30,7 +30,7 @@ interface BookingResponse {
 export const bookEvent = async (bookingData: BookingRequest): Promise<BookingResponse> => {
   try {
     const response = await axiosInstance.post("/event/book", bookingData);
-    
+    console.log("After booking responce ====>",response.data);
     const booking = response.data.booking;
     
     return {
