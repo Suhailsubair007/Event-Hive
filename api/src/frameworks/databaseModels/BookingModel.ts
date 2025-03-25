@@ -20,7 +20,7 @@ const BookingSchema = new Schema<Booking & Document>(
     bookingDate: { type: Date, default: Date.now },
     qrCode: { type: String, required: true },
     totalAmount: { type: Number, required: true, min: 0 },
-    paymentMethod: { type: String, enum: ["stripe", "wallet"], required: true },
+    paymentMethod: { type: String, enum: ["razorpay", "wallet"], required: true },
   },
   { timestamps: true }
 );

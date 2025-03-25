@@ -14,6 +14,15 @@ export class BookEventController {
     try {
       const { userId, eventId, tickets, qrCode, totalAmount, paymentMethod } =
         req.body;
+        console.log("User ID: ", userId);
+        console.log("Event ID: ", eventId);
+        console.log("Tickets: ", tickets);
+        console.log("QR Code: ", qrCode);
+        console.log("Total Amount: ", totalAmount);
+        console.log("Payment Method: ", paymentMethod);
+        
+
+        console.log("I reached here");
 
       const booking: Booking = {
         userId,
