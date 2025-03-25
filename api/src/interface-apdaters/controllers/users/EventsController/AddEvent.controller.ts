@@ -1,4 +1,3 @@
-// src/interface-adapters/controllers/AddEventController.ts
 import { Request, Response } from "express";
 import { AddEvent } from "../../../../use-cases/user/Events/AddEvent";
 import { Event } from "../../../../entities/modelInterface/Event";
